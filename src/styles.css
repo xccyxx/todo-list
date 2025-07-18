@@ -1,21 +1,24 @@
 @import 'modern-normalize';
 
-html {
+/* Base box sizing */
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: inherit;
-}
-
-body {
-  font-family: system-ui, sans-serif;
+/* Set up full-height layout */
+html, body {
+  height: 100%;
   line-height: 1.5;
-  min-height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
+/* Image and media defaults */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Custom CSS */
 .container {
   display: grid;
   grid-template-columns: 3fr 7fr;

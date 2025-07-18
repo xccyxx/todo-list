@@ -1,4 +1,6 @@
-const initializeTodosContent = () => {
+import TodoItem from "./Todo.js";
+
+const initializeTodosContent = (onTodoSubmit) => {
     const todosSection = document.querySelector(".todos-section");
     
     // Create to-do form
@@ -33,6 +35,19 @@ const initializeTodosContent = () => {
 
     // Add the form to the todos section
      todosSection.appendChild(todoForm);
-}
+
+     // Set up event listener for data processing
+     todoForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(todoForm);
+
+        const title = formData.get('title');
+        const description = formData.get('description');  
+        const dueDate = formData.get('dueDate');
+        const priority = formData.get('priority');
+        const newTodo = new TodoItem(title, description, dueDate, priority);
+        console.log("Created todo:", newTodo);
+     });}
 
 export { initializeTodosContent };

@@ -1,12 +1,26 @@
 // index.js
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
-import { initializeTodosContent } from "./TodoDOM.js";
+import { initializeTodosContent, renderTodo } from "./TodoDOM.js";
+import { handleTodoSubmit } from "./TodoLogic.js";
 import "./styles.css";
 
 
 
 // Pre-populate UI content
 document.addEventListener("DOMContentLoaded", (event) => {
-    initializeTodosContent();
+
+  const onTodoSubmit = (todoData) => {
+    // Handle the business logic
+    const newTodo = handleTodoSubmit(todoData);
+    
+    // Handle the UI update
+    renderTodo(newTodo);
+    
+    // Could add more here: save to localStorage, analytics, etc.
+};
+
+    initializeTodosContent(onTodoSubmit);
   });
+
+

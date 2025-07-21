@@ -35,6 +35,7 @@ const initializeTodosContent = (onTodoSubmit) => {
 
     // Add the form to the todos section
      todosSection.appendChild(todoForm);
+     
 
      // Set up event listener for data processing
      todoForm.addEventListener("submit", (e) => {
@@ -42,12 +43,32 @@ const initializeTodosContent = (onTodoSubmit) => {
 
         const formData = new FormData(todoForm);
 
-        const title = formData.get('title');
-        const description = formData.get('description');  
-        const dueDate = formData.get('dueDate');
-        const priority = formData.get('priority');
-        const newTodo = new TodoItem(title, description, dueDate, priority);
-        console.log("Created todo:", newTodo);
-     });}
+        const todoData = {
+            title: formData.get('title'),
+            description: formData.get('description'), 
+            dueDate: formData.get('dueDate'),
+            priority: formData.get('priority'),
+        }
+        onTodoSubmit(todoData);
+     });
+}
 
-export { initializeTodosContent };
+const renderTodo = (todoItem) => {
+    const todoDiv = document.createElement("div");
+    todoDiv.className = "todo-item";
+    todoDiv.innerHTML = `
+        <h4>${todoItem.title}</h4>
+        <p>${todoItem.description}</p>
+        <span>Due: ${todoItem.dueDate}</span>
+        <span>Priority: ${todoItem.priority}</span>
+    `;
+
+    // Display the new to-do div
+    const todosSection = document.querySelector(".todos-section");
+    todosSection.appendChild(todoDiv);
+
+    // return todoDiv for later use
+     return todoDiv;
+}
+
+export { initializeTodosContent, renderTodo };

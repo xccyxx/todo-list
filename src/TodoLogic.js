@@ -1,8 +1,10 @@
-export function addNewTodo(todoData) {
-    // Process the todo data here
-    console.log("Logic received:", todoData);
-    // Eventually this will create a TodoItem, add to project, etc.
-}
+import TodoItem from './Todo.js';
 
-// In TodoDOM.js - you'd import and call it
-import { handleNewTodo } from './TodoLogic.js';
+const handleTodoSubmit = (todoData) => {
+    const { title, description, dueDate, priority } = todoData;
+    const newTodo = new TodoItem(title, description, dueDate, priority);
+    console.log("Created:", newTodo);
+    return newTodo;
+};
+
+export { handleTodoSubmit };

@@ -1,7 +1,9 @@
 export default class ProjectItem {
-  constructor(id, name, todosArr) {
-    this.id = 
+  static latestId = 0; // Initialize a static counter
+
+  constructor(name, todosArr = []) {
+    this.id = ++ProjectItem.latestId;
     this.name = 
-    this.todosArr = 
+    this.todosArr = todosArr || [];
   }
 }

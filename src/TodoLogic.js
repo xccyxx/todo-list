@@ -7,4 +7,14 @@ const handleTodoSubmit = (todoData) => {
     return newTodo;
 };
 
+const addTodoToProject = (todo, projectId) => {
+    projectId.
+}
+
+const handleProjectSubmit = (projectData) => {
+    const { name } = projectData;
+    const newProject = new ProjectItem(name);
+    return newProject;
+}
+
 export { handleTodoSubmit };

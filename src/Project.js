@@ -3,7 +3,7 @@ export default class ProjectItem {
 
   constructor(name, todosArr = []) {
     this.id = ++ProjectItem.latestId;
-    this.name = 
+    this.name = name;
     this.todosArr = todosArr || [];
   }
 }

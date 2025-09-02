@@ -1,4 +1,5 @@
 import TodoItem from "./Todo.js";
+import ProjectItem from "./Project.js";
 
 const initializeTodosContent = (onTodoSubmit) => {
     const todosSection = document.querySelector(".todos-section");
@@ -28,6 +29,11 @@ const initializeTodosContent = (onTodoSubmit) => {
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
+            </select>
+        </div>
+        <div>
+            <select name="project" id="project-select">
+
             </select>
         </div>
         <button type="submit">Add Todo</button>
@@ -73,6 +79,11 @@ const renderTodo = (todoItem) => {
 
 const initializeProjectsContent = (onProjectSubmit) => {
     const projectsSection = document.querySelector(".projects-section");
+
+    // Add Projects List Div to store all the project divs
+    const projectsList = document.createElement("div");
+    projectsList.className = "projects-list";
+    projectsSection.appendChild(projectsList);
     
     // Create to-do form
     const projectForm = document.createElement('form');
@@ -90,19 +101,42 @@ const initializeProjectsContent = (onProjectSubmit) => {
 
     // Add the form to the projectS section
      projectsSection.appendChild(projectForm);
-     
-
+    
      // Set up event listener for data processing
      projectForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
         const formData = new FormData(projectForm);
-
         const projectData = {
-            // TODO
+            name: formData.get("name")
         }
         onProjectSubmit(projectData);
      });
 }
 
-export { initializeTodosContent, renderTodo, initializeProjectsContent };
+const renderProjects = (projects) => {
+    const fragment = document.createDocumentFragment();
+    projects.forEach(project => {
+        const projectDiv = document.createElement("div");
+        projectDiv.className = "project-item";
+        projectDiv.innerHTML = `
+            <h4>${project.name}</h4>
+            <p>${project.todosArr}</p>
+        `;
+        fragment.appendChild(projectDiv);
+    })
+
+    const projectsList = document.querySelector(".projects-list");
+    projectsList.textContent = "";
+    projectsList.appendChild(fragment);
+}
+
+const updateProjectDropdown = (projectList) => {
+    const dropdown = document.querySelector("#project-select");
+    const optionsHTML = projectList.map(project => {
+        return `<option value='${ project.name }'>${ project.name }</option>`;
+    }).join("");
+    dropdown.innerHTML = optionsHTML;
+}
+
+export { initializeTodosContent, renderTodo, initializeProjectsContent, renderProjects, updateProjectDropdown };

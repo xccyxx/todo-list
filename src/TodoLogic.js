@@ -1,9 +1,9 @@
 import TodoItem from './Todo.js';
+import ProjectItem from './Project.js';
 
 const handleTodoSubmit = (todoData) => {
     const { title, description, dueDate, priority } = todoData;
     const newTodo = new TodoItem(title, description, dueDate, priority);
-    console.log("Created:", newTodo);
     return newTodo;
 };
 
@@ -16,4 +16,4 @@ const handleProjectSubmit = (projectData) => {
     return newProject;
 }
 
-export { handleTodoSubmit };
+export { handleTodoSubmit, handleProjectSubmit };

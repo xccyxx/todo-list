@@ -71,4 +71,38 @@ const renderTodo = (todoItem) => {
      return todoDiv;
 }
 
-export { initializeTodosContent, renderTodo };
+const initializeProjectsContent = (onProjectSubmit) => {
+    const projectsSection = document.querySelector(".projects-section");
+    
+    // Create to-do form
+    const projectForm = document.createElement('form');
+    projectForm.className = 'project-form';
+
+    // Create form HTML
+    projectForm.innerHTML = `
+        <h3>Add New Project</h3>
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <button type="submit">Add Project</button>
+    `;
+
+    // Add the form to the projectS section
+     projectsSection.appendChild(projectForm);
+     
+
+     // Set up event listener for data processing
+     projectForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(projectForm);
+
+        const projectData = {
+            // TODO
+        }
+        onProjectSubmit(projectData);
+     });
+}
+
+export { initializeTodosContent, renderTodo, initializeProjectsContent };

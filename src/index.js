@@ -1,7 +1,7 @@
 // index.js
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
-import { initializeTodosContent, renderTodo } from "./TodoDOM.js";
+import { initializeTodosContent, renderTodo, initializeProjectsContent } from "./TodoDOM.js";
 import { handleTodoSubmit } from "./TodoLogic.js";
 import "./styles.css";
 
@@ -18,9 +18,20 @@ document.addEventListener("DOMContentLoaded", (event) => {
     renderTodo(newTodo);
     
     // Could add more here: save to localStorage, analytics, etc.
-};
+  };
+
+  const onProjectSubmit = (projectData) => {
+    // Handle the business logic
+    const newProject = handleTodoSubmit(projectData);
+    
+    // Handle the UI update
+    renderProject(newProject);
+    
+    // Could add more here: save to localStorage, analytics, etc.
+  }
 
     initializeTodosContent(onTodoSubmit);
+    initializeProjectsContent(onProjectSubmit);
   });
 
 

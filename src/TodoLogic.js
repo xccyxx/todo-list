@@ -8,7 +8,6 @@ const handleTodoSubmit = (todoData) => {
 };
 
 const addTodoToProject = (todo, projectId) => {
-    projectId.
 }
 
 const handleProjectSubmit = (projectData) => {

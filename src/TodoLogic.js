@@ -1,13 +1,17 @@
 import TodoItem from './Todo.js';
 import ProjectItem from './Project.js';
 
-const handleTodoSubmit = (todoData) => {
-    const { title, description, dueDate, priority } = todoData;
+const createTodoItem = (title, description, dueDate, priority) => {
     const newTodo = new TodoItem(title, description, dueDate, priority);
     return newTodo;
 };
 
-const addTodoToProject = (todo, projectId) => {
+const addTodoToProject = (todo, selectedProjectId, projectList) => {
+    const targetProject = projectList.find(project => project.id === selectedProjectId);
+    if (targetProject) {
+        targetProject.todosArr.push(todo);
+    }
+    console.log(targetProject.todosArr);
 }
 
 const handleProjectSubmit = (projectData) => {
@@ -16,4 +20,4 @@ const handleProjectSubmit = (projectData) => {
     return newProject;
 }
 
-export { handleTodoSubmit, handleProjectSubmit };
+export { createTodoItem, handleProjectSubmit, addTodoToProject };

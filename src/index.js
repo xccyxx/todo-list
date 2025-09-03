@@ -2,7 +2,7 @@
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
 import { initializeTodosContent, renderTodo, initializeProjectsContent, renderProjects, updateProjectDropdown } from "./TodoDOM.js";
-import { handleTodoSubmit, handleProjectSubmit } from "./TodoLogic.js";
+import { createTodoItem, handleProjectSubmit, addTodoToProject } from "./TodoLogic.js";
 import "./styles.css";
 
 
@@ -12,9 +12,14 @@ var projectList = [];
 document.addEventListener("DOMContentLoaded", (event) => {
 
   const onTodoSubmit = (todoData) => {
-    // Handle the business logic
-    const newTodo = handleTodoSubmit(todoData);
+    // Extract the data
+    const { title, description, dueDate, priority, project } = todoData;
+    const selectedProjectId = parseInt(project);
     
+    // Handle the business logic
+    const newTodo = createTodoItem(title, description, dueDate, priority);
+    addTodoToProject(newTodo, selectedProjectId, projectList);
+
     // Handle the UI update
     renderTodo(newTodo);
     

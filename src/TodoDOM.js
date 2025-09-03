@@ -33,7 +33,6 @@ const initializeTodosContent = (onTodoSubmit) => {
         </div>
         <div>
             <select name="project" id="project-select">
-
             </select>
         </div>
         <button type="submit">Add Todo</button>
@@ -54,6 +53,7 @@ const initializeTodosContent = (onTodoSubmit) => {
             description: formData.get('description'), 
             dueDate: formData.get('dueDate'),
             priority: formData.get('priority'),
+            project: formData.get("project")
         }
         onTodoSubmit(todoData);
      });
@@ -134,7 +134,7 @@ const renderProjects = (projects) => {
 const updateProjectDropdown = (projectList) => {
     const dropdown = document.querySelector("#project-select");
     const optionsHTML = projectList.map(project => {
-        return `<option value='${ project.name }'>${ project.name }</option>`;
+        return `<option value='${ project.id }'>${ project.name }</option>`;
     }).join("");
     dropdown.innerHTML = optionsHTML;
 }

@@ -6,18 +6,24 @@ const createTodoItem = (title, description, dueDate, priority) => {
     return newTodo;
 };
 
-const addTodoToProject = (todo, selectedProjectId, projectList) => {
-    const targetProject = projectList.find(project => project.id === selectedProjectId);
+const createProjectItem = (projectName) => {
+    const newProject = new ProjectItem(projectName);
+    return newProject;
+}
+
+const addProject = (projectName, projects) => {
+    // Handle the business logic
+    const newProject = createProjectItem(projectName);
+    projects.push(newProject);
+}
+
+const addTodoToProject = (todo, selectedProjectId, projects) => {
+    const targetProject = projects.find(project => project.id === selectedProjectId);
     if (targetProject) {
         targetProject.todosArr.push(todo);
     }
     console.log(targetProject.todosArr);
 }
 
-const handleProjectSubmit = (projectData) => {
-    const { name } = projectData;
-    const newProject = new ProjectItem(name);
-    return newProject;
-}
 
-export { createTodoItem, handleProjectSubmit, addTodoToProject };
+export { createTodoItem, createProjectItem, addProject, addTodoToProject };

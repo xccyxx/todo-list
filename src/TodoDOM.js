@@ -131,9 +131,9 @@ const renderProjects = (projects) => {
     projectsList.appendChild(fragment);
 }
 
-const updateProjectDropdown = (projectList) => {
+const updateProjectDropdown = (projects) => {
     const dropdown = document.querySelector("#project-select");
-    const optionsHTML = projectList.map(project => {
+    const optionsHTML = projects.map(project => {
         return `<option value='${ project.id }'>${ project.name }</option>`;
     }).join("");
     dropdown.innerHTML = optionsHTML;

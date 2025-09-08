@@ -11,7 +11,7 @@ export default class TodoItem {
         title: this.title, 
         description: this.description, 
         dueDate:this.dueDate, 
-        priority: this.priority
+        priority: this.priority 
     }
   }
 

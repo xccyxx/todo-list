@@ -64,7 +64,7 @@ const initializeTodosContent = (onTodoSubmit) => {
     todosSection.appendChild(todosContainer);
 }
 
-const renderTodo = (todos) => {
+const renderTodos = (todos, onCompletedToggle) => {
     const fragment = document.createDocumentFragment();
     todos.forEach(todo => {
         const todoDiv = document.createElement("div");
@@ -72,10 +72,17 @@ const renderTodo = (todos) => {
         todoDiv.innerHTML = `
             <h4>${todo.title}</h4>
             <p>${todo.description}</p>
-            <span>Due: ${todo.dueDate}</span>
-            <span>Priority: ${todo.priority}</span>
-            <p>${todo.completed}</p>
+            <p>Due: ${todo.dueDate}</p>
+            <p>Priority: ${todo.priority}</p>
+            <button type="button" id="${todo.id}">${todo.completed? "Uncomplete" : "Complete"}</button>
+            <p>Completed: ❌</p>
         `;
+        const button = todoDiv.querySelector("button");
+
+        // Add on-click todo completion toggling
+        button.addEventListener("click", () => {
+            onCompletedToggle(todo);
+        })
         fragment.appendChild(todoDiv);
     })
 
@@ -147,4 +154,4 @@ const updateProjectDropdown = (projects) => {
     dropdown.innerHTML = optionsHTML;
 }
 
-export { initializeTodosContent, renderTodo, initializeProjectsContent, renderProjects, updateProjectDropdown };
+export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateProjectDropdown };

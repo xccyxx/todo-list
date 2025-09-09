@@ -36,4 +36,4 @@ const toggleTodoCompletion = (todo) => {
 }
 
 
-export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject };
+export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion };

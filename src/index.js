@@ -1,7 +1,7 @@
 // index.js
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
-import { initializeTodosContent, renderTodo, initializeProjectsContent, renderProjects, updateProjectDropdown } from "./TodoDOM.js";
+import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateProjectDropdown } from "./TodoDOM.js";
 import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject } from "./TodoLogic.js";
 import "./styles.css";
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     assignTodoToProject(newTodo, selectedProjectId, projectList);
 
     // Handle the UI update
-    renderTodo(todoList);
+    renderTodos(todoList);
   };
 
   const handleProjectCreation = (projectName) => {
@@ -41,7 +41,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
     handleProjectCreation(projectName);
   }
 
-    initializeTodosContent(onTodoSubmit);
+  const onCompletedToggle = (todo) => {
+  toggleTodoCompletion(todo);
+  // Then re-render the todos to show updated state
+  renderTodos(todoList); // However you get your todo list
+};
+
+    initializeTodosContent(onTodoSubmit, onCompletedToggle);
     initializeProjectsContent(onProjectSubmit);
     // Add a default Project first
     handleProjectCreation("Today");

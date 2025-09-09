@@ -2,11 +2,12 @@
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
 import { initializeTodosContent, renderTodo, initializeProjectsContent, renderProjects, updateProjectDropdown } from "./TodoDOM.js";
-import { createTodoItem, createProjectItem, addProject, addTodoToProject } from "./TodoLogic.js";
+import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject } from "./TodoLogic.js";
 import "./styles.css";
 
 
 var projectList = [];
+var todoList = [];
 
 // Pre-populate UI content
 document.addEventListener("DOMContentLoaded", (event) => {
@@ -18,10 +19,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
     
     // Handle the business logic
     const newTodo = createTodoItem(title, description, dueDate, priority);
-    addTodoToProject(newTodo, selectedProjectId, projectList);
+    addTodo(newTodo, todoList);
+    assignTodoToProject(newTodo, selectedProjectId, projectList);
 
     // Handle the UI update
-    renderTodo(newTodo);
+    renderTodo(todoList);
   };
 
   const handleProjectCreation = (projectName) => {

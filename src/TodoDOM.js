@@ -39,11 +39,11 @@ const initializeTodosContent = (onTodoSubmit) => {
     `;
 
     // Add the form to the todos section
-     todosSection.appendChild(todoForm);
+    todosSection.appendChild(todoForm);
      
 
      // Set up event listener for data processing
-     todoForm.addEventListener("submit", (e) => {
+    todoForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
         const formData = new FormData(todoForm);
@@ -57,33 +57,41 @@ const initializeTodosContent = (onTodoSubmit) => {
         }
         onTodoSubmit(todoData);
      });
+
+    // Add Todos List Div to store all the project divs
+    const todosContainer = document.createElement("div");
+    todosContainer.className = "todos-container";
+    todosSection.appendChild(todosContainer);
 }
 
-const renderTodo = (todoItem) => {
-    const todoDiv = document.createElement("div");
-    todoDiv.className = "todo-item";
-    todoDiv.innerHTML = `
-        <h4>${todoItem.title}</h4>
-        <p>${todoItem.description}</p>
-        <span>Due: ${todoItem.dueDate}</span>
-        <span>Priority: ${todoItem.priority}</span>
-    `;
+const renderTodo = (todos) => {
+    const fragment = document.createDocumentFragment();
+    todos.forEach(todo => {
+        const todoDiv = document.createElement("div");
+        todoDiv.className = "todo-item";
+        todoDiv.innerHTML = `
+            <h4>${todo.title}</h4>
+            <p>${todo.description}</p>
+            <span>Due: ${todo.dueDate}</span>
+            <span>Priority: ${todo.priority}</span>
+            <p>${todo.completed}</p>
+        `;
+        fragment.appendChild(todoDiv);
+    })
 
     // Display the new to-do div
-    const todosSection = document.querySelector(".todos-section");
-    todosSection.appendChild(todoDiv);
-
-    // return todoDiv for later use
-     return todoDiv;
+    const todosContainer = document.querySelector(".todos-container");
+    todosContainer.innerHTML = "";
+    todosContainer.appendChild(fragment);
 }
 
 const initializeProjectsContent = (onProjectSubmit) => {
     const projectsSection = document.querySelector(".projects-section");
 
     // Add Projects List Div to store all the project divs
-    const projectsList = document.createElement("div");
-    projectsList.className = "projects-list";
-    projectsSection.appendChild(projectsList);
+    const projectsContainer = document.createElement("div");
+    projectsContainer.className = "projects-container";
+    projectsSection.appendChild(projectsContainer);
     
     // Create to-do form
     const projectForm = document.createElement('form');
@@ -126,9 +134,9 @@ const renderProjects = (projects) => {
         fragment.appendChild(projectDiv);
     })
 
-    const projectsList = document.querySelector(".projects-list");
-    projectsList.textContent = "";
-    projectsList.appendChild(fragment);
+    const projectsContainer = document.querySelector(".projects-container");
+    projectsContainer.innerHTML = "";
+    projectsContainer.appendChild(fragment);
 }
 
 const updateProjectDropdown = (projects) => {

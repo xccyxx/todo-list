@@ -17,7 +17,13 @@ const addProject = (projectName, projects) => {
     projects.push(newProject);
 }
 
-const addTodoToProject = (todo, selectedProjectId, projects) => {
+const addTodo = (newTodoItem, todoList) => {
+    if (newTodoItem) {
+        todoList.push(newTodoItem);
+    }
+}
+
+const assignTodoToProject = (todo, selectedProjectId, projects) => {
     const targetProject = projects.find(project => project.id === selectedProjectId);
     if (targetProject) {
         targetProject.todosArr.push(todo);
@@ -25,5 +31,9 @@ const addTodoToProject = (todo, selectedProjectId, projects) => {
     console.log(targetProject.todosArr);
 }
 
+const toggleTodoCompletion = (todo) => {
+    todo.completed = !todo.completed;
+}
 
-export { createTodoItem, createProjectItem, addProject, addTodoToProject };
+
+export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject };

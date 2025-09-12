@@ -69,20 +69,29 @@ const renderTodos = (todos, onCompletedToggle) => {
     todos.forEach(todo => {
         const todoDiv = document.createElement("div");
         todoDiv.className = "todo-item";
+        todoDiv.id = `todo-${todo.id}`;
         todoDiv.innerHTML = `
             <h4>${todo.title}</h4>
             <p>${todo.description}</p>
             <p>Due: ${todo.dueDate}</p>
-            <p>Priority: ${todo.priority}</p>
-            <button type="button" id="${todo.id}">${todo.completed? "Uncomplete" : "Complete"}</button>
-            <p>Completed: ❌</p>
+            <p class="priority">Priority: ${todo.priority} <button type="button" class="priority-btn">☰</button></p>
+            <p>Completed: ${todo.completed? "✅" : "❌"}</p>
+            <button type="button" class="complete-btn">${todo.completed? "Uncomplete" : "Complete"}</button>            
         `;
-        const button = todoDiv.querySelector("button");
+
+        // Add on-click priority changing btn
+        const priorityButton = todoDiv.querySelector(".priority-btn");
+        priorityButton.addEventListener("click", () => {
+            rendorPriorityList(todo.id);
+        })
+
 
         // Add on-click todo completion toggling
-        button.addEventListener("click", () => {
+        const completeButton = todoDiv.querySelector(".complete-btn");
+        completeButton.addEventListener("click", () => {
             onCompletedToggle(todo);
         })
+
         fragment.appendChild(todoDiv);
     })
 
@@ -152,6 +161,21 @@ const updateProjectDropdown = (projects) => {
         return `<option value='${ project.id }'>${ project.name }</option>`;
     }).join("");
     dropdown.innerHTML = optionsHTML;
+}
+
+const rendorPriorityList = (todoId) => {
+    const priorityElement = document.querySelector(`#${todoId} .priority`);
+    priorityElement.innerHTML = 
+    `
+        <div>
+            <label for="priority">Priority:</label>
+            <select id="priority" name="priority">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+        </div>
+    `
 }
 
 export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateProjectDropdown };

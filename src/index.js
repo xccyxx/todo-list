@@ -2,7 +2,7 @@
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
 import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateProjectDropdown } from "./TodoDOM.js";
-import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject } from "./TodoLogic.js";
+import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion } from "./TodoLogic.js";
 import "./styles.css";
 
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     assignTodoToProject(newTodo, selectedProjectId, projectList);
 
     // Handle the UI update
-    renderTodos(todoList);
+    renderTodos(todoList, onCompletedToggle);
   };
 
   const handleProjectCreation = (projectName) => {
@@ -35,19 +35,22 @@ document.addEventListener("DOMContentLoaded", (event) => {
   }
 
   const onProjectSubmit = (projectData) => {
-    console.log(projectData);
     // Extract the data
     const { name: projectName } = projectData;
     handleProjectCreation(projectName);
   }
 
   const onCompletedToggle = (todo) => {
-  toggleTodoCompletion(todo);
-  // Then re-render the todos to show updated state
-  renderTodos(todoList); // However you get your todo list
-};
+    toggleTodoCompletion(todo);
+    // Then re-render the todos to show updated state
+    renderTodos(todoList, onCompletedToggle);
+  };
 
-    initializeTodosContent(onTodoSubmit, onCompletedToggle);
+  const onPriorityChange = () => {
+    rendorPriorityList();
+  }
+
+    initializeTodosContent(onTodoSubmit);
     initializeProjectsContent(onProjectSubmit);
     // Add a default Project first
     handleProjectCreation("Today");

@@ -1,7 +1,7 @@
 // index.js
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
-import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateProjectDropdown } from "./TodoDOM.js";
+import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateProjectDropdown, enterEditMode } from "./TodoDOM.js";
 import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion } from "./TodoLogic.js";
 import "./styles.css";
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     assignTodoToProject(newTodo, selectedProjectId, projectList);
 
     // Handle the UI update
-    renderTodos(todoList, onCompletedToggle);
+    renderTodos(todoList, onCompletedToggle, onTodoEdit);
   };
 
   const handleProjectCreation = (projectName) => {
@@ -43,22 +43,27 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const onCompletedToggle = (todo) => {
     toggleTodoCompletion(todo);
     // Then re-render the todos to show updated state
-    renderTodos(todoList, onCompletedToggle);
+    renderTodos(todoList, onCompletedToggle, onTodoEdit);
   };
 
-  const onTodoEdit = (todoData) => {
-    // Extract the data
-    const { title, description, dueDate, priority, project } = todoData;
-    const selectedProjectId = parseInt(project);
+  const onTodoEdit = (todoId, todo) => {
+    // // Extract the data
+    // const { title, description, dueDate, priority, project } = todoData;
+    // const selectedProjectId = parseInt(project);
     
-    // Handle the business logic
-    const newTodo = createTodoItem(title, description, dueDate, priority);
-    addTodo(newTodo, todoList);
-    assignTodoToProject(newTodo, selectedProjectId, projectList);
+    // // Handle the business logic
+    // const newTodo = createTodoItem(title, description, dueDate, priority);
+    // addTodo(newTodo, todoList);
+    // assignTodoToProject(newTodo, selectedProjectId, projectList);
 
     // Handle the UI update
-    renderTodos(todoList, onCompletedToggle);
+    console.log(document.querySelectorAll(".project-select"));
+    enterEditMode(todoId, todo, onTodoEdit);
+    updateProjectDropdown(projectList);
+
   };
+
+
     initializeTodosContent(onTodoSubmit);
     initializeProjectsContent(onProjectSubmit);
     // Add a default Project first

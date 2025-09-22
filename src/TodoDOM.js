@@ -32,7 +32,7 @@ const initializeTodosContent = (onTodoSubmit) => {
             </select>
         </div>
         <div>
-            <select name="project" id="project-select">
+            <select name="project" class="project-select">
             </select>
         </div>
         <button type="submit">Add Todo</button>
@@ -64,13 +64,13 @@ const initializeTodosContent = (onTodoSubmit) => {
     todosSection.appendChild(todosContainer);
 }
 
-const renderTodos = (todos, onCompletedToggle, onEdit) => {
+const renderTodos = (todos, onCompletedToggle, onTodoEdit) => {
     const fragment = document.createDocumentFragment();
     todos.forEach(todo => {
         // a "card" for each to-do
         const todoDiv = document.createElement("div");
         todoDiv.className = "todo-item";
-        todoDiv.id = `todo-${todo.id}`;
+        todoDiv.dataset.todoId = todo.id;
         // add todo-view for displaying and hiding purpose
         todoDiv.innerHTML = `
             <div class="todo-view">
@@ -93,7 +93,7 @@ const renderTodos = (todos, onCompletedToggle, onEdit) => {
         // Add on-click edit the form
         const editButton = todoDiv.querySelector(".edit-btn");
         editButton.addEventListener("click", () => {
-            enterEditMode(todoDiv, todo);
+            onTodoEdit(todo.id, todo);
         })
 
         fragment.appendChild(todoDiv);
@@ -105,7 +105,8 @@ const renderTodos = (todos, onCompletedToggle, onEdit) => {
     todosContainer.appendChild(fragment);
 }
 
-const enterEditMode = (todoDiv, todo, onTodoSubmit) => {
+const enterEditMode = (todoId, todo, onTodoEdit) => {
+    const todoDiv = document.querySelector(`[data-todo-id="${todoId}"]`);
     // Hide the current HTML elements
     const todoView = todoDiv.querySelector(".todo-view");
     todoView.style.display = "none";
@@ -137,30 +138,34 @@ const enterEditMode = (todoDiv, todo, onTodoSubmit) => {
             </select>
         </div>
         <div>
-            <select name="project" id="project-select">
+            <select name="project" class="project-select">
             </select>
         </div>
         <button type="submit">Confirm</button>
     `;
+
     // pre-set the default value of the priority dropdown
     editForm.querySelector('.todo-priority').value = todo.priority;
     todoDiv.appendChild(editForm);
 
-    // Set up event listener for data processing
-    editForm.addEventListener("submit", (e) => {
-        e.preventDefault();
+    // pre-set the default value of the project dropdown
 
-        const formData = new FormData(editForm);
 
-        const todoData = {
-            title: formData.get('title'),
-            description: formData.get('description'), 
-            dueDate: formData.get('dueDate'),
-            priority: formData.get('priority'),
-            project: formData.get("project")
-        }
-        onTodoSubmit(todoData);
-     });
+    // // Set up event listener for data processing
+    // editForm.addEventListener("submit", (e) => {
+    //     e.preventDefault();
+
+    //     const formData = new FormData(editForm);
+
+    //     const todoData = {
+    //         title: formData.get('title'),
+    //         description: formData.get('description'), 
+    //         dueDate: formData.get('dueDate'),
+    //         priority: formData.get('priority'),
+    //         project: formData.get("project")
+    //     }
+    //     onTodoSubmit(todoData);
+    //  });
 }
 
 const initializeProjectsContent = (onProjectSubmit) => {
@@ -218,11 +223,13 @@ const renderProjects = (projects) => {
 }
 
 const updateProjectDropdown = (projects) => {
-    const dropdown = document.querySelector("#project-select");
+    const dropdowns = document.querySelectorAll(".project-select");
     const optionsHTML = projects.map(project => {
         return `<option value='${ project.id }'>${ project.name }</option>`;
     }).join("");
-    dropdown.innerHTML = optionsHTML;
+    dropdowns.forEach(dropdown => {
+        dropdown.innerHTML = optionsHTML;
+    })
 }
 
 const rendorPriorityList = (todoId) => {
@@ -240,4 +247,4 @@ const rendorPriorityList = (todoId) => {
     `
 }
 
-export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateProjectDropdown };
+export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateProjectDropdown, enterEditMode };

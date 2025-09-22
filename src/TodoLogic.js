@@ -35,9 +35,11 @@ const toggleTodoCompletion = (todo) => {
     todo.completed = !todo.completed;
 }
 
-// const changeTodoPriority = (todo) => {
-//     todo.priority = 
-// }
+const editTodo = (updatedTodoItem, todoList) => {
+    if (updatedTodoItem) {
+        todoList.push(newTodoItem);
+    }
+}
 
 
 export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion };

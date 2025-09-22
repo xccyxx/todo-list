@@ -46,10 +46,19 @@ document.addEventListener("DOMContentLoaded", (event) => {
     renderTodos(todoList, onCompletedToggle);
   };
 
-  const onPriorityChange = () => {
-    rendorPriorityList();
-  }
+  const onTodoEdit = (todoData) => {
+    // Extract the data
+    const { title, description, dueDate, priority, project } = todoData;
+    const selectedProjectId = parseInt(project);
+    
+    // Handle the business logic
+    const newTodo = createTodoItem(title, description, dueDate, priority);
+    addTodo(newTodo, todoList);
+    assignTodoToProject(newTodo, selectedProjectId, projectList);
 
+    // Handle the UI update
+    renderTodos(todoList, onCompletedToggle);
+  };
     initializeTodosContent(onTodoSubmit);
     initializeProjectsContent(onProjectSubmit);
     // Add a default Project first

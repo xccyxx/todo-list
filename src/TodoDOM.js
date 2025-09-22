@@ -26,9 +26,9 @@ const initializeTodosContent = (onTodoSubmit) => {
         <div>
             <label for="priority">Priority:</label>
             <select id="priority" name="priority">
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
             </select>
         </div>
         <div>
@@ -64,32 +64,36 @@ const initializeTodosContent = (onTodoSubmit) => {
     todosSection.appendChild(todosContainer);
 }
 
-const renderTodos = (todos, onCompletedToggle) => {
+const renderTodos = (todos, onCompletedToggle, onEdit) => {
     const fragment = document.createDocumentFragment();
     todos.forEach(todo => {
+        // a "card" for each to-do
         const todoDiv = document.createElement("div");
         todoDiv.className = "todo-item";
         todoDiv.id = `todo-${todo.id}`;
+        // add todo-view for displaying and hiding purpose
         todoDiv.innerHTML = `
-            <h4>${todo.title}</h4>
-            <p>${todo.description}</p>
-            <p>Due: ${todo.dueDate}</p>
-            <p class="priority">Priority: ${todo.priority} <button type="button" class="priority-btn">☰</button></p>
-            <p>Completed: ${todo.completed? "✅" : "❌"}</p>
-            <button type="button" class="complete-btn">${todo.completed? "Uncomplete" : "Complete"}</button>            
+            <div class="todo-view">
+                <h4>${todo.title}</h4>
+                <p>${todo.description}</p>
+                <p>Due: ${todo.dueDate}</p>
+                <p class="priority">Priority: ${todo.priority} </p>
+                <p>Completed: ${todo.completed? "✅" : "❌"}</p>
+                <button type="button" class="complete-btn">${todo.completed? "Uncomplete" : "Complete"}</button>
+                <button type="button" class="edit-btn">Edit</button>     
+            </div>
         `;
-
-        // Add on-click priority changing btn
-        const priorityButton = todoDiv.querySelector(".priority-btn");
-        priorityButton.addEventListener("click", () => {
-            rendorPriorityList(todo.id);
-        })
-
 
         // Add on-click todo completion toggling
         const completeButton = todoDiv.querySelector(".complete-btn");
         completeButton.addEventListener("click", () => {
             onCompletedToggle(todo);
+        })
+
+        // Add on-click edit the form
+        const editButton = todoDiv.querySelector(".edit-btn");
+        editButton.addEventListener("click", () => {
+            enterEditMode(todoDiv, todo);
         })
 
         fragment.appendChild(todoDiv);
@@ -99,6 +103,64 @@ const renderTodos = (todos, onCompletedToggle) => {
     const todosContainer = document.querySelector(".todos-container");
     todosContainer.innerHTML = "";
     todosContainer.appendChild(fragment);
+}
+
+const enterEditMode = (todoDiv, todo, onTodoSubmit) => {
+    // Hide the current HTML elements
+    const todoView = todoDiv.querySelector(".todo-view");
+    todoView.style.display = "none";
+
+    // Create to-do edit form that look like the Todo Divs
+    const editForm = document.createElement('form');
+    editForm.className = 'todo-edit-form';
+    
+    // Create form HTML
+    editForm.innerHTML = `
+        <div>
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" value="${todo.title}" required>
+        </div>
+        <div>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description">${todo.description}</textarea>
+        </div>
+        <div>
+            <label for="dueDate">Due Date:</label>
+            <input type="date" id="dueDate" name="dueDate" value="${todo.dueDate}">
+        </div>
+        <div>
+            <label for="priority">Priority:</label>
+            <select id="priority" name="priority" class="todo-priority">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+        <div>
+            <select name="project" id="project-select">
+            </select>
+        </div>
+        <button type="submit">Confirm</button>
+    `;
+    // pre-set the default value of the priority dropdown
+    editForm.querySelector('.todo-priority').value = todo.priority;
+    todoDiv.appendChild(editForm);
+
+    // Set up event listener for data processing
+    editForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(editForm);
+
+        const todoData = {
+            title: formData.get('title'),
+            description: formData.get('description'), 
+            dueDate: formData.get('dueDate'),
+            priority: formData.get('priority'),
+            project: formData.get("project")
+        }
+        onTodoSubmit(todoData);
+     });
 }
 
 const initializeProjectsContent = (onProjectSubmit) => {

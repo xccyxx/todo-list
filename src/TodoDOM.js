@@ -32,6 +32,7 @@ const initializeTodosContent = (onTodoSubmit) => {
             </select>
         </div>
         <div>
+            <label for="project">Assign to Project:</label>
             <select name="project" class="project-select">
             </select>
         </div>
@@ -64,7 +65,7 @@ const initializeTodosContent = (onTodoSubmit) => {
     todosSection.appendChild(todosContainer);
 }
 
-const renderTodos = (todos, onCompletedToggle, onTodoEdit) => {
+const renderTodos = (todos, onCompletedToggle, handleEditButtonClick) => {
     const fragment = document.createDocumentFragment();
     todos.forEach(todo => {
         // a "card" for each to-do
@@ -93,7 +94,7 @@ const renderTodos = (todos, onCompletedToggle, onTodoEdit) => {
         // Add on-click edit the form
         const editButton = todoDiv.querySelector(".edit-btn");
         editButton.addEventListener("click", () => {
-            onTodoEdit(todo.id, todo);
+            handleEditButtonClick(todo.id, todo);
         })
 
         fragment.appendChild(todoDiv);
@@ -105,7 +106,7 @@ const renderTodos = (todos, onCompletedToggle, onTodoEdit) => {
     todosContainer.appendChild(fragment);
 }
 
-const enterEditMode = (todoId, todo, onTodoEdit) => {
+const enterEditMode = (todoId, todo, projects, matchProject, onTodoEdit) => {
     const todoDiv = document.querySelector(`[data-todo-id="${todoId}"]`);
     // Hide the current HTML elements
     const todoView = todoDiv.querySelector(".todo-view");
@@ -117,6 +118,7 @@ const enterEditMode = (todoId, todo, onTodoEdit) => {
     
     // Create form HTML
     editForm.innerHTML = `
+        <h3>Edit Todo:</h3>
         <div>
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" value="${todo.title}" required>
@@ -138,6 +140,7 @@ const enterEditMode = (todoId, todo, onTodoEdit) => {
             </select>
         </div>
         <div>
+            <label for="project">Assign to Project:</label>
             <select name="project" class="project-select">
             </select>
         </div>
@@ -146,9 +149,14 @@ const enterEditMode = (todoId, todo, onTodoEdit) => {
 
     // pre-set the default value of the priority dropdown
     editForm.querySelector('.todo-priority').value = todo.priority;
+
+    // append the form to the todo div
     todoDiv.appendChild(editForm);
 
     // pre-set the default value of the project dropdown
+    updateProjectDropdown(projects);
+    editForm.querySelector(".project-select").value = matchProject.id;
+
 
 
     // // Set up event listener for data processing

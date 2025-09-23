@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     assignTodoToProject(newTodo, selectedProjectId, projectList);
 
     // Handle the UI update
-    renderTodos(todoList, onCompletedToggle, onTodoEdit);
+    renderTodos(todoList, onCompletedToggle, handleEditButtonClick);
   };
 
   const handleProjectCreation = (projectName) => {
@@ -43,25 +43,24 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const onCompletedToggle = (todo) => {
     toggleTodoCompletion(todo);
     // Then re-render the todos to show updated state
-    renderTodos(todoList, onCompletedToggle, onTodoEdit);
+    renderTodos(todoList, onCompletedToggle, handleEditButtonClick);
   };
 
-  const onTodoEdit = (todoId, todo) => {
+  const handleEditButtonClick = (todoId, todo) => {
     // // Extract the data
     // const { title, description, dueDate, priority, project } = todoData;
-    // const selectedProjectId = parseInt(project);
+    // const selectedProjectId = parseInt(project)
     
     // // Handle the business logic
     // const newTodo = createTodoItem(title, description, dueDate, priority);
     // addTodo(newTodo, todoList);
     // assignTodoToProject(newTodo, selectedProjectId, projectList);
 
+    // find the project that the todo belongs to
+    const matchProject = projectList.find((project) => project.todosArr.includes(todo));
     // Handle the UI update
-    console.log(document.querySelectorAll(".project-select"));
-    enterEditMode(todoId, todo, onTodoEdit);
-    updateProjectDropdown(projectList);
-
-  };
+    enterEditMode(todoId, todo, projectList, matchProject);
+  };  
 
 
     initializeTodosContent(onTodoSubmit);

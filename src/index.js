@@ -1,8 +1,8 @@
 // index.js
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
-import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateProjectDropdown, enterEditMode } from "./TodoDOM.js";
-import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion } from "./TodoLogic.js";
+import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode } from "./TodoDOM.js";
+import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo } from "./TodoLogic.js";
 import "./styles.css";
 
 
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     addProject(projectName, projectList);
     // Handle the UI update
     renderProjects(projectList);
-    updateProjectDropdown(projectList);
+    updateAllProjectDropdown(projectList);
   }
 
   const onProjectSubmit = (projectData) => {
@@ -59,14 +59,17 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // find the project that the todo belongs to
     const matchProject = projectList.find((project) => project.todosArr.includes(todo));
     // Handle the UI update
-    enterEditMode(todoId, todo, projectList, matchProject);
+    enterEditMode(todoId, todo, projectList, matchProject, onTodoEdit);
   };  
 
+  const onTodoEdit = (todo, editedData) => {
+    updateTodo(todo, editedData);
+  }
 
-    initializeTodosContent(onTodoSubmit);
-    initializeProjectsContent(onProjectSubmit);
-    // Add a default Project first
-    handleProjectCreation("Today");
+  initializeTodosContent(onTodoSubmit);
+  initializeProjectsContent(onProjectSubmit);
+  // Add a default Project first
+  handleProjectCreation("Today");
   });
 
 

@@ -35,11 +35,14 @@ const toggleTodoCompletion = (todo) => {
     todo.completed = !todo.completed;
 }
 
-const editTodo = (updatedTodoItem, todoList) => {
-    if (updatedTodoItem) {
-        todoList.push(newTodoItem);
-    }
+const updateTodo = (todo, editedData) => {
+    todo.title = editedData.title;
+    todo.description = editedData.description;
+    todo.dueDate = editedData.dueDate;
+    todo.priority = editedData.priority;
 }
 
 
-export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion };
+
+
+export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo };

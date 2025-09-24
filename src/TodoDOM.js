@@ -5,11 +5,12 @@ const initializeTodosContent = (onTodoSubmit) => {
     const todosSection = document.querySelector(".todos-section");
     
     // Create to-do form
-    const todoForm = document.createElement('form');
-    todoForm.className = 'todo-form';
+    const addTodoFormContainer = document.createElement("div");
+    addTodoFormContainer.className = 'add-todo-form-container';
+    const addTodoForm = document.createElement('form');
 
     // Create form HTML
-    todoForm.innerHTML = `
+    addTodoForm.innerHTML = `
         <h3>Add New Todo</h3>
         <div>
             <label for="title">Title:</label>
@@ -40,14 +41,15 @@ const initializeTodosContent = (onTodoSubmit) => {
     `;
 
     // Add the form to the todos section
-    todosSection.appendChild(todoForm);
+    addTodoFormContainer.appendChild(addTodoForm);
+    todosSection.appendChild(addTodoFormContainer);
      
 
      // Set up event listener for data processing
-    todoForm.addEventListener("submit", (e) => {
+    addTodoForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        const formData = new FormData(todoForm);
+        const formData = new FormData(addTodoForm);
 
         const todoData = {
             title: formData.get('title'),
@@ -59,7 +61,7 @@ const initializeTodosContent = (onTodoSubmit) => {
         onTodoSubmit(todoData);
      });
 
-    // Add Todos List Div to store all the project divs
+    // Add Todo List Div to store all the project divs
     const todosContainer = document.createElement("div");
     todosContainer.className = "todos-container";
     todosSection.appendChild(todosContainer);
@@ -145,6 +147,7 @@ const enterEditMode = (todoId, todo, projects, matchProject, onTodoEdit) => {
             </select>
         </div>
         <button type="submit">Confirm</button>
+        <button type="button" class="exit-edit-btn">Cancel</button>
     `;
 
     // pre-set the default value of the priority dropdown
@@ -154,26 +157,45 @@ const enterEditMode = (todoId, todo, projects, matchProject, onTodoEdit) => {
     todoDiv.appendChild(editForm);
 
     // pre-set the default value of the project dropdown
-    updateProjectDropdown(projects);
+    populateProjectDropdown(todoDiv, projects);
     editForm.querySelector(".project-select").value = matchProject.id;
 
 
+    // Set up event listener for data processing
+    editForm.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-    // // Set up event listener for data processing
-    // editForm.addEventListener("submit", (e) => {
-    //     e.preventDefault();
+        const formData = new FormData(editForm);
 
-    //     const formData = new FormData(editForm);
+        const editedData = {
+            title: formData.get('title'),
+            description: formData.get('description'), 
+            dueDate: formData.get('dueDate'),
+            priority: formData.get('priority'),
+            project: formData.get("project")
+        }
+        onTodoEdit(todo, editedData);
+        // todo.project = editedData.project;
+        console.log(todo);
 
-    //     const todoData = {
-    //         title: formData.get('title'),
-    //         description: formData.get('description'), 
-    //         dueDate: formData.get('dueDate'),
-    //         priority: formData.get('priority'),
-    //         project: formData.get("project")
-    //     }
-    //     onTodoSubmit(todoData);
-    //  });
+     });
+
+    // Set up event listener for the Cancel btn
+    const exitBtn = todoDiv.querySelector(".exit-edit-btn");
+    exitBtn.addEventListener("click", () => {
+        exitEditMode(todoId, todo);
+    })
+}
+
+const exitEditMode = (todoId, todo) => {
+    const todoDiv = document.querySelector(`[data-todo-id="${todoId}"]`);
+    // Hide the current HTML elements
+    const todoView = todoDiv.querySelector(".todo-view");
+    todoView.style.display = "block";
+
+    // Delete the to-do edit form
+    const editForm = todoDiv.querySelector(".todo-edit-form");
+    editForm.remove();
 }
 
 const initializeProjectsContent = (onProjectSubmit) => {
@@ -230,14 +252,22 @@ const renderProjects = (projects) => {
     projectsContainer.appendChild(fragment);
 }
 
-const updateProjectDropdown = (projects) => {
+const updateAllProjectDropdown = (projects) => {
     const dropdowns = document.querySelectorAll(".project-select");
     const optionsHTML = projects.map(project => {
         return `<option value='${ project.id }'>${ project.name }</option>`;
     }).join("");
-    dropdowns.forEach(dropdown => {
+    dropdowns.forEach((dropdown) => {
         dropdown.innerHTML = optionsHTML;
     })
+}
+
+const populateProjectDropdown = (container, projects) => {
+    const dropdown = container.querySelector(".project-select");
+    const optionsHTML = projects.map(project => {
+        return `<option value='${ project.id }'>${ project.name }</option>`;
+    }).join("");
+    dropdown.innerHTML = optionsHTML;
 }
 
 const rendorPriorityList = (todoId) => {
@@ -255,4 +285,4 @@ const rendorPriorityList = (todoId) => {
     `
 }
 
-export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateProjectDropdown, enterEditMode };
+export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode };

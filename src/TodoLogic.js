@@ -28,7 +28,6 @@ const assignTodoToProject = (todo, selectedProjectId, projects) => {
     if (targetProject) {
         targetProject.todosArr.push(todo);
     }
-    console.log(targetProject.todosArr);
 }
 
 const toggleTodoCompletion = (todo) => {
@@ -42,7 +41,20 @@ const updateTodo = (todo, editedData) => {
     todo.priority = editedData.priority;
 }
 
+const reassignProject = (projects, todo, editedData) => {
+    const oldProject = projects.find((project) => project.todosArr.includes(todo));
+    const targetProjectId = parseInt(editedData.projectId);
+
+    // if the old project is found and the user changed the project only
+    if (oldProject && oldProject.id !== targetProjectId) {
+        // find the position of the todo in the matched project
+        const todoIndex = oldProject.todosArr.indexOf(todo);
+        // remove the todo in the old project
+        oldProject.todosArr.splice(todoIndex, 1);
+        // add the todo to the new project
+        assignTodoToProject(todo, targetProjectId, projects);
+    }
+}   
 
 
-
-export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo };
+export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject };

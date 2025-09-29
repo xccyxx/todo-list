@@ -2,12 +2,12 @@
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
 import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode } from "./TodoDOM.js";
-import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo } from "./TodoLogic.js";
+import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject } from "./TodoLogic.js";
 import "./styles.css";
 
 
-var projectList = [];
-var todoList = [];
+let projectList = [];
+let todoList = [];
 
 // Pre-populate UI content
 document.addEventListener("DOMContentLoaded", (event) => {
@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   const onTodoEdit = (todo, editedData) => {
     updateTodo(todo, editedData);
+    reassignProject(projectList, todo, editedData);
   }
 
   initializeTodosContent(onTodoSubmit);

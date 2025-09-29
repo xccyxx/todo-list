@@ -172,11 +172,10 @@ const enterEditMode = (todoId, todo, projects, matchProject, onTodoEdit) => {
             description: formData.get('description'), 
             dueDate: formData.get('dueDate'),
             priority: formData.get('priority'),
-            project: formData.get("project")
+            projectId: formData.get("project")
         }
         onTodoEdit(todo, editedData);
         // todo.project = editedData.project;
-        console.log(todo);
 
      });
 

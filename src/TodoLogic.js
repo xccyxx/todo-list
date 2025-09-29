@@ -15,6 +15,7 @@ const addProject = (projectName, projects) => {
     // Handle the business logic
     const newProject = createProjectItem(projectName);
     projects.push(newProject);
+    console.log(projects);
 }
 
 const addTodo = (newTodoItem, todoList) => {

@@ -1,7 +1,7 @@
 // index.js
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
-import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode } from "./TodoDOM.js";
+import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode, exitEditMode } from "./TodoDOM.js";
 import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject } from "./TodoLogic.js";
 import "./styles.css";
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     assignTodoToProject(newTodo, selectedProjectId, projectList);
 
     // Handle the UI update
-    renderTodos(todoList, onCompletedToggle, handleEditButtonClick);
+    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick);
   };
 
   const handleProjectCreation = (projectName) => {
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const onCompletedToggle = (todo) => {
     toggleTodoCompletion(todo);
     // Then re-render the todos to show updated state
-    renderTodos(todoList, onCompletedToggle, handleEditButtonClick);
+    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick);
   };
 
   const handleEditButtonClick = (todoId, todo) => {
@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const onTodoEdit = (todo, editedData) => {
     updateTodo(todo, editedData);
     reassignProject(projectList, todo, editedData);
+    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick);
   }
 
   initializeTodosContent(onTodoSubmit);

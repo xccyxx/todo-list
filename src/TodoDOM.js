@@ -44,8 +44,7 @@ const initializeTodosContent = (onTodoSubmit) => {
     addTodoFormContainer.appendChild(addTodoForm);
     todosSection.appendChild(addTodoFormContainer);
      
-
-     // Set up event listener for data processing
+    // Set up event listener for data processing
     addTodoForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -67,13 +66,17 @@ const initializeTodosContent = (onTodoSubmit) => {
     todosSection.appendChild(todosContainer);
 }
 
-const renderTodos = (todos, onCompletedToggle, handleEditButtonClick) => {
+const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick) => {
     const fragment = document.createDocumentFragment();
     todos.forEach(todo => {
         // a "card" for each to-do
         const todoDiv = document.createElement("div");
         todoDiv.className = "todo-item";
         todoDiv.dataset.todoId = todo.id;
+
+        // find out matched project that the todo belongs to
+        const matchProject = projects.find((project) => project.todosArr.includes(todo));
+
         // add todo-view for displaying and hiding purpose
         todoDiv.innerHTML = `
             <div class="todo-view">
@@ -82,6 +85,7 @@ const renderTodos = (todos, onCompletedToggle, handleEditButtonClick) => {
                 <p>Due: ${todo.dueDate}</p>
                 <p class="priority">Priority: ${todo.priority} </p>
                 <p>Completed: ${todo.completed? "✅" : "❌"}</p>
+                <p>Project: ${matchProject?.name || "None"}</p>
                 <button type="button" class="complete-btn">${todo.completed? "Uncomplete" : "Complete"}</button>
                 <button type="button" class="edit-btn">Edit</button>     
             </div>
@@ -175,8 +179,6 @@ const enterEditMode = (todoId, todo, projects, matchProject, onTodoEdit) => {
             projectId: formData.get("project")
         }
         onTodoEdit(todo, editedData);
-        // todo.project = editedData.project;
-
      });
 
     // Set up event listener for the Cancel btn
@@ -281,7 +283,7 @@ const rendorPriorityList = (todoId) => {
                 <option value="high">High</option>
             </select>
         </div>
-    `
+    `   
 }
 
-export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode };
+export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode, exitEditMode };

@@ -18,9 +18,9 @@ const addProject = (projectName, projects) => {
     console.log(projects);
 }
 
-const addTodo = (newTodoItem, todoList) => {
+const addTodo = (newTodoItem, todos) => {
     if (newTodoItem) {
-        todoList.push(newTodoItem);
+        todos.push(newTodoItem);
     }
 }
 
@@ -57,5 +57,18 @@ const reassignProject = (projects, todo, editedData) => {
     }
 }   
 
+const deleteTodo = (todo, projects, todos) => {
+    const matchProject = projects.find((project) => project.todosArr.includes(todo));
+    if (matchProject && todos.includes(todo)) {
+        // delete the Todo from project list
+        const todoIndexInProjects = matchProject.todosArr.indexOf(todo);
+        matchProject.todosArr.splice(todoIndexInProjects, 1);
 
-export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject };
+        // delete the Todo from todo list
+        const todoIndexInTodos = todos.indexOf(todo);
+        todos.splice(todoIndexInTodos, 1);
+    }
+}
+
+
+export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject, deleteTodo };

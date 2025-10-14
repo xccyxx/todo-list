@@ -2,7 +2,7 @@
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
 import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode, exitEditMode } from "./TodoDOM.js";
-import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject } from "./TodoLogic.js";
+import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject, deleteTodo } from "./TodoLogic.js";
 import "./styles.css";
 
 
@@ -47,15 +47,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
   };
 
   const handleEditButtonClick = (todoId, todo) => {
-    // // Extract the data
-    // const { title, description, dueDate, priority, project } = todoData;
-    // const selectedProjectId = parseInt(project)
-    
-    // // Handle the business logic
-    // const newTodo = createTodoItem(title, description, dueDate, priority);
-    // addTodo(newTodo, todoList);
-    // assignTodoToProject(newTodo, selectedProjectId, projectList);
-
     // find the project that the todo belongs to
     const matchProject = projectList.find((project) => project.todosArr.includes(todo));
     // Handle the UI update
@@ -66,6 +57,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
     updateTodo(todo, editedData);
     reassignProject(projectList, todo, editedData);
     renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick);
+  }
+
+  const handleDeleteButtonClick = (todo) => {
+    deleteTodo(todo);
   }
 
   initializeTodosContent(onTodoSubmit);

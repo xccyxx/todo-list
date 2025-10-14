@@ -1,5 +1,6 @@
 import TodoItem from "./Todo.js";
 import ProjectItem from "./Project.js";
+import { deleteTodo } from "./TodoLogic.js";
 
 const initializeTodosContent = (onTodoSubmit) => {
     const todosSection = document.querySelector(".todos-section");
@@ -80,21 +81,24 @@ const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick) 
         // add todo-view for displaying and hiding purpose
         todoDiv.innerHTML = `
             <div class="todo-view">
-                <h4>${todo.title}</h4>
+                <div class="todo-header">
+                    <input type="checkbox" class="complete-checkbox" ${todo.completed? "checked" : ""}/>
+                    <h4>${todo.title}</h4>
+                </div>
                 <p>${todo.description}</p>
                 <p>Due: ${todo.dueDate}</p>
                 <p class="priority">Priority: ${todo.priority} </p>
-                <p>Completed: ${todo.completed? "✅" : "❌"}</p>
                 <p>Project: ${matchProject?.name || "None"}</p>
-                <button type="button" class="complete-btn">${todo.completed? "Uncomplete" : "Complete"}</button>
                 <button type="button" class="edit-btn">Edit</button>     
+                <button type="button" class="delete-btn">Delete</button>
             </div>
         `;
 
         // Add on-click todo completion toggling
-        const completeButton = todoDiv.querySelector(".complete-btn");
-        completeButton.addEventListener("click", () => {
+        const completeCheckbox = todoDiv.querySelector(".complete-checkbox");
+        completeCheckbox.addEventListener("click", () => {
             onCompletedToggle(todo);
+            console.log(todo.completed);
         })
 
         // Add on-click edit the form
@@ -104,6 +108,12 @@ const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick) 
         })
 
         fragment.appendChild(todoDiv);
+
+        // Add on-click delete the form
+        const deleteButton = todoDiv.querySelector(".delete-btn");
+        deleteButton.addEventListener("click", () => {
+            deleteTodo(todo, projects, todos);
+        })
     })
 
     // Display the new to-do div
@@ -271,19 +281,5 @@ const populateProjectDropdown = (container, projects) => {
     dropdown.innerHTML = optionsHTML;
 }
 
-const rendorPriorityList = (todoId) => {
-    const priorityElement = document.querySelector(`#${todoId} .priority`);
-    priorityElement.innerHTML = 
-    `
-        <div>
-            <label for="priority">Priority:</label>
-            <select id="priority" name="priority">
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-            </select>
-        </div>
-    `   
-}
 
 export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode, exitEditMode };

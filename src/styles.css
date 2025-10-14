@@ -28,3 +28,9 @@ img, picture, video, canvas, svg {
 .container > * {
     border: 2px black solid;
 }
+
+.todo-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

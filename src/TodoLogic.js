@@ -59,14 +59,16 @@ const reassignProject = (projects, todo, editedData) => {
 
 const deleteTodo = (todo, projects, todos) => {
     const matchProject = projects.find((project) => project.todosArr.includes(todo));
-    if (matchProject && todos.includes(todo)) {
-        // delete the Todo from project list
-        const todoIndexInProjects = matchProject.todosArr.indexOf(todo);
-        matchProject.todosArr.splice(todoIndexInProjects, 1);
+    // delete the Todo from project list
+    if (matchProject) {
+        const index = matchProject.todosArr.indexOf(todo);
+        matchProject.todosArr.splice(index, 1);
+    }
 
-        // delete the Todo from todo list
-        const todoIndexInTodos = todos.indexOf(todo);
-        todos.splice(todoIndexInTodos, 1);
+    // delete the Todo from todo list
+    const index = todos.indexOf(todo);
+    if (index !== -1) {
+        todos.splice(index, 1);
     }
 }
 

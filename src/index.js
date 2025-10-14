@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
     assignTodoToProject(newTodo, selectedProjectId, projectList);
 
     // Handle the UI update
-    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick);
+    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+    renderProjects(projectList);
   };
 
   const handleProjectCreation = (projectName) => {
@@ -43,7 +44,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const onCompletedToggle = (todo) => {
     toggleTodoCompletion(todo);
     // Then re-render the todos to show updated state
-    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick);
+    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
   };
 
   const handleEditButtonClick = (todoId, todo) => {
@@ -56,17 +57,18 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const onTodoEdit = (todo, editedData) => {
     updateTodo(todo, editedData);
     reassignProject(projectList, todo, editedData);
-    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick);
+    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
   }
 
   const handleDeleteButtonClick = (todo) => {
-    deleteTodo(todo);
+    deleteTodo(todo, projectList, todoList);
+    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
   }
 
   initializeTodosContent(onTodoSubmit);
   initializeProjectsContent(onProjectSubmit);
   // Add a default Project first
-  handleProjectCreation("Today");
+  handleProjectCreation("Default");
   });
 
 

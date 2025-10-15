@@ -23,8 +23,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
     assignTodoToProject(newTodo, selectedProjectId, projectList);
 
     // Handle the UI update
-    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
-    renderProjects(projectList);
+      renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+    renderProjects(projectList);                   
   };
 
   const handleProjectCreation = (projectName) => {
@@ -58,11 +58,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
     updateTodo(todo, editedData);
     reassignProject(projectList, todo, editedData);
     renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+    renderProjects(projectList);
   }
 
   const handleDeleteButtonClick = (todo) => {
     deleteTodo(todo, projectList, todoList);
-    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);  
   }
 
   initializeTodosContent(onTodoSubmit);

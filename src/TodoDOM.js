@@ -76,7 +76,7 @@ const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick, 
         todoDiv.dataset.todoId = todo.id;
         // Add on-click to expand details
         todoDiv.addEventListener("click", () => {
-            showTodoDetailsModal(todo, projects, handleEditButtonClick);
+            showTodoDetailsModal(todo, projects, handleEditButtonClick, handleDeleteButtonClick);
         })
 
         // add todo-view for displaying and hiding purpose
@@ -87,8 +87,6 @@ const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick, 
                     <h4>${todo.title}</h4>
                 </div>
                 <p>Due: ${todo.dueDate}</p>
-                <button type="button" class="edit-btn">Edit</button>     
-                <button type="button" class="delete-btn">Delete</button>
             </div>
         `;
 
@@ -97,12 +95,6 @@ const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick, 
         completeCheckbox.addEventListener("click", () => {
             onCompletedToggle(todo);
             console.log(todo.completed);
-        })
-
-        // Add on-click delete the form
-        const deleteButton = todoDiv.querySelector(".delete-btn");
-        deleteButton.addEventListener("click", () => {
-            handleDeleteButtonClick(todo);
         })
 
         fragment.appendChild(todoDiv);
@@ -114,7 +106,7 @@ const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick, 
     todosContainer.appendChild(fragment);
 }
 
-const showTodoDetailsModal = (todo, projects, handleEditButtonClick) => {
+const showTodoDetailsModal = (todo, projects, handleEditButtonClick, handleDeleteButtonClick) => {
     const dialog = document.createElement("dialog");
     dialog.className = "todo-details-modal";
 
@@ -131,16 +123,28 @@ const showTodoDetailsModal = (todo, projects, handleEditButtonClick) => {
         <button class="delete-btn">Delete</button>
         <button class="close-btn">Close</button>
     `
-    document.body.appendChild(dialog);
-    dialog.showModal();
 
     // Add on-click edit the form
     const editButton = dialog.querySelector(".edit-btn");
     editButton.addEventListener("click", () => {
+        handleEditButtonClick(todo.id, todo);
         dialog.close();
         dialog.remove();
-        handleEditButtonClick(todo.id, todo);
     })
+
+    // Add on-click delete the form
+    const deleteButton = dialog.querySelector(".delete-btn");
+    deleteButton.addEventListener("click", () => {
+        if (confirm("Delete this todo?")) {
+            handleDeleteButtonClick(todo);
+            dialog.close();
+            dialog.remove();
+        }
+    })
+
+    // finalize the dialog content
+    document.body.appendChild(dialog);
+    dialog.showModal();
 }
 
 const enterEditMode = (todoId, todo, projects, matchProject, onTodoEdit) => {
@@ -151,14 +155,10 @@ const enterEditMode = (todoId, todo, projects, matchProject, onTodoEdit) => {
 
     const dialog = document.createElement("dialog");
     dialog.className = "todo-edit-modal";
-
-    // Create to-do edit form that look like the Todo Divs
-    const editForm = dialog.createElement('form');
-    editForm.className = 'todo-edit-form';
     
     // Create form HTML
     dialog.innerHTML = `
-        <form class="todo-edit-form" method="dialog">
+        <form class="todo-edit-form">
             <h3>Edit Todo:</h3>
             <div>
                 <label for="title">Title:</label>
@@ -192,10 +192,11 @@ const enterEditMode = (todoId, todo, projects, matchProject, onTodoEdit) => {
     `;
 
     // pre-set the default value of the priority dropdown
+    const editForm = dialog.querySelector('.todo-edit-form');
     editForm.querySelector('.todo-priority').value = todo.priority;
 
-    // append the form to the todo div
-    dialog.appendChild(editForm);
+    // append the dialog to the web
+    document.body.appendChild(dialog);
     dialog.showModal();
 
     // pre-set the default value of the project dropdown
@@ -216,25 +217,17 @@ const enterEditMode = (todoId, todo, projects, matchProject, onTodoEdit) => {
             priority: formData.get('priority'),
             projectId: formData.get("project")
         }
+        dialog.close();
+        dialog.remove();
         onTodoEdit(todo, editedData);
-     });
+     });        
 
     // Set up event listener for the Cancel btn
     const exitBtn = dialog.querySelector(".exit-edit-btn");
     exitBtn.addEventListener("click", () => {
-        exitEditMode(todoId, todo);
+        dialog.close();
+        dialog.remove();
     })
-}
-
-const exitEditMode = (todoId, todo) => {
-    const todoDiv = document.querySelector(`[data-todo-id="${todoId}"]`);
-    // Hide the current HTML elements
-    const todoView = todoDiv.querySelector(".todo-view");
-    todoView.style.display = "block";
-
-    // Delete the to-do edit form
-    const editForm = todoDiv.querySelector(".todo-edit-form");
-    editForm.remove();
 }
 
 const initializeProjectsContent = (onProjectSubmit) => {
@@ -318,4 +311,4 @@ const populateProjectDropdown = (container, projects) => {
 }
 
 
-export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode, exitEditMode };
+export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode };

@@ -1,7 +1,7 @@
 // index.js
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
-import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, enterEditMode, exitEditMode } from "./TodoDOM.js";
+import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, showEditModal, exitEditMode } from "./TodoDOM.js";
 import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject, deleteTodo } from "./TodoLogic.js";
 import "./styles.css";
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     assignTodoToProject(newTodo, selectedProjectId, projectList);
 
     // Handle the UI update
-      renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
     renderProjects(projectList);                   
   };
 
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // find the project that the todo belongs to
     const matchProject = projectList.find((project) => project.todosArr.includes(todo));
     // Handle the UI update
-    enterEditMode(todoId, todo, projectList, matchProject, onTodoEdit);
+    showEditModal(todoId, todo, projectList, matchProject, onTodoEdit);
   };  
 
   const onTodoEdit = (todo, editedData) => {
@@ -63,7 +63,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   const handleDeleteButtonClick = (todo) => {
     deleteTodo(todo, projectList, todoList);
-    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);  
+    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+    renderProjects(projectList);                   
   }
 
   initializeTodosContent(onTodoSubmit);

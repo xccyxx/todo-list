@@ -15,7 +15,6 @@ const addProject = (projectName, projects) => {
     // Handle the business logic
     const newProject = createProjectItem(projectName);
     projects.push(newProject);
-    console.log(projects);
 }
 
 const addTodo = (newTodoItem, todos) => {
@@ -43,7 +42,7 @@ const updateTodo = (todo, editedData) => {
 }
 
 const reassignProject = (projects, todo, editedData) => {
-    const oldProject = projects.find((project) => project.todosArr.includes(todo));
+    const oldProject = projects.find((project) => project.todosArr.some(projectTodo => projectTodo.id === todo.id));
     const targetProjectId = parseInt(editedData.projectId);
 
     // if the old project is found and the user changed the project only

@@ -1,76 +1,136 @@
 // index.js
 import { greeting } from "./greeting.js";
 import TodoItem from "./Todo.js";
+import ProjectItem from "./Project.js";
 import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, showEditModal, exitEditMode } from "./TodoDOM.js";
 import { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject, deleteTodo } from "./TodoLogic.js";
 import "./styles.css";
 
 
-let projectList = [];
-let todoList = [];
+let projects = [];
+let todos = [];
+
+  const saveProjectsToStorage = (projects) => {
+    localStorage.setItem("projects", JSON.stringify(projects));
+}
+
+  const saveTodosToStorage = (todos) => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }
 
 // Pre-populate UI content
 document.addEventListener("DOMContentLoaded", (event) => {
+  // Load the project and todo list from storage
+  projects = JSON.parse(localStorage.getItem("projects")) || [];
+  todos = JSON.parse(localStorage.getItem("todos")) || [];
 
-  const onTodoSubmit = (todoData) => {
+  // Restore the static counters to the highest existing ID
+  if (projects.length > 0) {
+    ProjectItem.latestId = Math.max(...projects.map(project => project.id));
+    console.log(ProjectItem.latestId);
+  }
+
+    if (todos.length > 0) {
+    TodoItem.latestId = Math.max(...todos.map(todo => todo.id));
+    console.log(TodoItem.latestId);
+  }
+
+  
+  const onTodoSubmit = (todoData, todos) => {
     // Extract the data
     const { title, description, dueDate, priority, project } = todoData;
     const selectedProjectId = parseInt(project);
     
     // Handle the business logic
     const newTodo = createTodoItem(title, description, dueDate, priority);
-    addTodo(newTodo, todoList);
-    assignTodoToProject(newTodo, selectedProjectId, projectList);
+    addTodo(newTodo, todos);
+    assignTodoToProject(newTodo, selectedProjectId, projects);
+    // Save to local stoarage
+    saveTodosToStorage(todos);
+    saveProjectsToStorage(projects);
 
     // Handle the UI update
-    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
-    renderProjects(projectList);                   
+    renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+    renderProjects(projects);                   
   };
 
   const handleProjectCreation = (projectName) => {
     // Add project
-    addProject(projectName, projectList);
+    addProject(projectName, projects);
+
     // Handle the UI update
-    renderProjects(projectList);
-    updateAllProjectDropdown(projectList);
+    renderProjects(projects);
+    updateAllProjectDropdown(projects);
   }
 
   const onProjectSubmit = (projectData) => {
     // Extract the data
     const { name: projectName } = projectData;
     handleProjectCreation(projectName);
+
+    // Save to local storage
+    saveProjectsToStorage(projects);
   }
 
   const onCompletedToggle = (todo) => {
     toggleTodoCompletion(todo);
+
+    // Save to local stoarage
+    saveTodosToStorage(todos);
+
     // Then re-render the todos to show updated state
-    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+    renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
   };
 
   const handleEditButtonClick = (todoId, todo) => {
     // find the project that the todo belongs to
-    const matchProject = projectList.find((project) => project.todosArr.includes(todo));
+    const matchProject = projects.find((project) => project.todosArr.some(projectTodo => projectTodo.id === todo.id));
+    console.log(projects);
+    console.log(todo);
     // Handle the UI update
-    showEditModal(todoId, todo, projectList, matchProject, onTodoEdit);
+    if (matchProject) {
+      showEditModal(todoId, todo, projects, matchProject, onTodoEdit);
+    }
   };  
 
   const onTodoEdit = (todo, editedData) => {
+    // Backend
     updateTodo(todo, editedData);
-    reassignProject(projectList, todo, editedData);
-    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
-    renderProjects(projectList);
+    reassignProject(projects, todo, editedData);
+
+    // Save to local stoarage
+    saveTodosToStorage(todos);
+    saveProjectsToStorage(projects);
+
+    // Frontend
+    renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+    renderProjects(projects);
   }
 
   const handleDeleteButtonClick = (todo) => {
-    deleteTodo(todo, projectList, todoList);
-    renderTodos(todoList, projectList, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
-    renderProjects(projectList);                   
+    // Backend
+    deleteTodo(todo, projects, todos);
+
+    // Save to local stoarage
+    saveTodosToStorage(todos);
+    saveProjectsToStorage(projects);
+
+    //Frontend
+    renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+    renderProjects(projects);                   
   }
 
-  initializeTodosContent(onTodoSubmit);
+  // Fire the Functions to populate all the elements when DOM loaded
+  initializeTodosContent(onTodoSubmit, todos);
   initializeProjectsContent(onProjectSubmit);
-  // Add a default Project first
-  handleProjectCreation("Default");
-  });
+  // Add a default Project whenever the Project list is empty
+  if (projects.length === 0) {
+    handleProjectCreation("Default");
+    
+  }
+  renderProjects(projects);     
+  renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+  updateAllProjectDropdown(projects);
+});
 
 

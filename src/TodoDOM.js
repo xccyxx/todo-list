@@ -15,20 +15,12 @@ const updateAllProjectDropdown = (projects) => {
     })
 }
 
-const populateProjectDropdown = (container, projects) => {
-    const dropdown = container.querySelector(".project-select");
-    const optionsHTML = projects.map(project => {
-        return `<option value='${ project.id }'>${ project.name }</option>`;
-    }).join("");
-    dropdown.innerHTML = optionsHTML;
-}
-
 const showTodoDetailsModal = (todo, projects, handleEditButtonClick, handleDeleteButtonClick) => {
     const dialog = document.createElement("dialog");
     dialog.className = "todo-details-modal";
 
     // find out matched project that the todo belongs to
-    const matchProject = projects.find((project) => project.todosArr.includes(todo));
+    const matchProject = projects.find((project) => project.todosArr.some(projectTodo => projectTodo.id === todo.id));
 
     dialog.innerHTML = `
         <h3>${todo.title}</h3>
@@ -69,6 +61,14 @@ const showTodoDetailsModal = (todo, projects, handleEditButtonClick, handleDelet
     // finalize the dialog content
     document.body.appendChild(dialog);
     dialog.showModal();
+}
+
+const populateProjectDropdown = (container, projects) => {
+    const dropdown = container.querySelector(".project-select");
+    const optionsHTML = projects.map(project => {
+        return `<option value='${ project.id }'>${ project.name }</option>`;
+    }).join("");
+    dropdown.innerHTML = optionsHTML;
 }
 
 const showEditModal = (todoId, todo, projects, matchProject, onTodoEdit) => {
@@ -149,7 +149,7 @@ const showEditModal = (todoId, todo, projects, matchProject, onTodoEdit) => {
     })
 }
 
-const initializeTodosContent = (onTodoSubmit) => {
+const initializeTodosContent = (onTodoSubmit, todos) => {
     const todosSection = document.querySelector(".todos-section");
     
     // Create to-do form
@@ -205,10 +205,10 @@ const initializeTodosContent = (onTodoSubmit) => {
             priority: formData.get('priority'),
             project: formData.get("project")
         }
-        onTodoSubmit(todoData);
+        onTodoSubmit(todoData, todos);
      });
 
-    // Add Todo List Div to store all the project divs
+    // Add Todo List Div to store all the todo divs
     const todosContainer = document.createElement("div");
     todosContainer.className = "todos-container";
     todosSection.appendChild(todosContainer);
@@ -222,7 +222,7 @@ const initializeProjectsContent = (onProjectSubmit) => {
     projectsContainer.className = "projects-container";
     projectsSection.appendChild(projectsContainer);
     
-    // Create to-do form
+    // Create project form
     const projectForm = document.createElement('form');
     projectForm.className = 'project-form';
 
@@ -236,7 +236,7 @@ const initializeProjectsContent = (onProjectSubmit) => {
         <button type="submit">Add Project</button>
     `;
 
-    // Add the form to the projectS section
+    // Add the form to the projects section
      projectsSection.appendChild(projectForm);
     
      // Set up event listener for data processing

@@ -34,11 +34,26 @@ const toggleTodoCompletion = (todo) => {
     todo.completed = !todo.completed;
 }
 
-const updateTodo = (todo, editedData) => {
+const updateTodo = (todo, editedData, projects) => {
+    // update the todo data in todo arr only
     todo.title = editedData.title;
     todo.description = editedData.description;
     todo.dueDate = editedData.dueDate;
     todo.priority = editedData.priority;
+
+    // return the updated todo for future use
+    return todo;
+}
+
+const updateTodoInProject = (todo, projects) => {
+    const matchProject = projects.find((project) => project.todosArr.some(projectTodo => projectTodo.id === todo.id));
+    // Safety check
+    if (!matchProject) return;
+
+    const index = matchProject.todosArr.findIndex(projectTodo => projectTodo.id === todo.id);
+    if (index !== -1) {
+        matchProject.todosArr[index] = todo;
+    }
 }
 
 const reassignProject = (projects, todo, editedData) => {
@@ -50,7 +65,7 @@ const reassignProject = (projects, todo, editedData) => {
         // find the position of the todo in the matched project
         const todoIndex = oldProject.todosArr.indexOf(todo);
         // remove the todo in the old project
-        oldProject.todosArr.splice(todoIndex, 1);
+        oldProject.todosArr.splice(todoIndex, 1);   
         // add the todo to the new project
         assignTodoToProject(todo, targetProjectId, projects);
     }
@@ -72,4 +87,4 @@ const deleteTodo = (todo, projects, todos) => {
 }
 
 
-export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject, deleteTodo };
+export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, updateTodoInProject, reassignProject, deleteTodo };

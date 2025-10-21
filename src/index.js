@@ -58,6 +58,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // Add project
     addProject(projectName, projects);
 
+    // Save to local storage
+    saveProjectsToStorage(projects);
+
     // Handle the UI update
     renderProjects(projects);
     updateAllProjectDropdown(projects);
@@ -67,9 +70,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // Extract the data
     const { name: projectName } = projectData;
     handleProjectCreation(projectName);
-
-    // Save to local storage
-    saveProjectsToStorage(projects);
   }
 
   const onCompletedToggle = (todo) => {
@@ -85,8 +85,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const handleEditButtonClick = (todoId, todo) => {
     // find the project that the todo belongs to
     const matchProject = projects.find((project) => project.todosArr.some(projectTodo => projectTodo.id === todo.id));
-    console.log(projects);
-    console.log(todo);
+
     // Handle the UI update
     if (matchProject) {
       showEditModal(todoId, todo, projects, matchProject, onTodoEdit);
@@ -95,8 +94,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   const onTodoEdit = (todo, editedData) => {
     // Backend
-    updateTodo(todo, editedData);
+    const updatedTodo = updateTodo(todo, editedData);
     reassignProject(projects, todo, editedData);
+    updateTodoInProject(updatedTodo, projects);
+
 
     // Save to local stoarage
     saveTodosToStorage(todos);

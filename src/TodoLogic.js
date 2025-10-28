@@ -23,6 +23,12 @@ const addTodo = (newTodoItem, todos) => {
     }
 }
 
+const getFilteredTodos = (currentProjectId, projects) => {
+    currentProjectId = parseInt(currentProjectId);
+    const targetProject = projects.find(targetProject => targetProject.id === currentProjectId);
+    return targetProject.todosArr;
+}
+
 const assignTodoToProject = (todo, selectedProjectId, projects) => {
     const targetProject = projects.find(project => project.id === selectedProjectId);
     if (targetProject) {
@@ -63,7 +69,7 @@ const reassignProject = (projects, todo, editedData) => {
     // if the old project is found and the user changed the project only
     if (oldProject && oldProject.id !== targetProjectId) {
         // find the position of the todo in the matched project
-        const todoIndex = oldProject.todosArr.indexOf(todo);
+        const todoIndex = oldProject.todosArr.findIndex(projectTodo => projectTodo.id === todo.id);
         // remove the todo in the old project
         oldProject.todosArr.splice(todoIndex, 1);   
         // add the todo to the new project
@@ -72,19 +78,19 @@ const reassignProject = (projects, todo, editedData) => {
 }   
 
 const deleteTodo = (todo, projects, todos) => {
-    const matchProject = projects.find((project) => project.todosArr.includes(todo));
+    const matchProject = projects.find((project) => project.todosArr.some(projectTodo => projectTodo.id === todo.id));
     // delete the Todo from project list
     if (matchProject) {
-        const index = matchProject.todosArr.indexOf(todo);
+        const index = matchProject.todosArr.findIndex(projectTodo => projectTodo.id === todo.id);
         matchProject.todosArr.splice(index, 1);
     }
 
     // delete the Todo from todo list
-    const index = todos.indexOf(todo);
+    const index = todos.findIndex(todoItem => todoItem.id === todo.id);
     if (index !== -1) {
         todos.splice(index, 1);
     }
 }
 
 
-export { createTodoItem, createProjectItem, addProject, addTodo, assignTodoToProject, toggleTodoCompletion, updateTodo, updateTodoInProject, reassignProject, deleteTodo };
+export { createTodoItem, createProjectItem, addProject, addTodo, getFilteredTodos, assignTodoToProject, toggleTodoCompletion, updateTodo, updateTodoInProject, reassignProject, deleteTodo };

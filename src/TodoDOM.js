@@ -315,11 +315,13 @@ const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick, 
     todosContainer.appendChild(fragment);
 }
 
-const renderProjects = (projects) => {
+const renderProjects = (projects, projectItemOnClick) => {
     const fragment = document.createDocumentFragment();
     projects.forEach(project => {
         const projectDiv = document.createElement("div");
         projectDiv.className = "project-item";
+        // set up an ID for current project state reference
+        projectDiv.dataset.projectId = project.id;
 
         // Todo items as li
         const todosHTML = project.todosArr
@@ -331,6 +333,11 @@ const renderProjects = (projects) => {
             <h4>${project.name}</h4>
             <ul>${todosHTML}</ul>
         `;
+
+        // On click for project state for filtering
+        projectDiv.addEventListener("click", () => {
+            projectItemOnClick(projectDiv.dataset.projectId);
+        })
 
         fragment.appendChild(projectDiv);
     })

@@ -152,7 +152,54 @@ const showEditModal = (todoId, todo, projects, matchProject, onTodoEdit) => {
 const initializeTodosContent = (onTodoSubmit, todos) => {
     const todosSection = document.querySelector(".todos-section");
     
-    // Create to-do form
+    // Create add to-do form button
+    const addTodoBtn = document.createElement("button");
+    addTodoBtn.textContent = "+";
+    addTodoBtn.className = "add-todo-button";
+
+    //add dialog
+    const dialog = document.createElement("dialog");
+    dialog.className = "add-todo-modal";
+    dialog.innerHTML = `
+        <form>
+            <h3>Add New Todo</h3>
+            <div>
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description"></textarea>
+            </div>
+            <div>
+                <label for="dueDate">Due Date:</label>
+                <input type="date" id="dueDate" name="dueDate" required>
+            </div>
+            <div>
+                <label for="priority">Priority:</label>
+                <select id="priority" name="priority">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+            </div>
+            <div>
+                <label for="project">Assign to Project:</label>
+                <select name="project" class="project-select">
+                </select>
+            </div>
+            <button type="submit">Add Todo</button>
+        </form>
+    `
+
+    todosSection.appendChild(addTodoBtn);
+    // WIP: Set up event listener for show add button form
+    addTodoBtn.addEventListener("click", () => {
+        dialog.showModal();
+    })
+
+
+
     const addTodoFormContainer = document.createElement("div");
     addTodoFormContainer.className = 'add-todo-form-container';
     const addTodoForm = document.createElement('form');
@@ -323,15 +370,9 @@ const renderProjects = (projects, projectItemOnClick) => {
         // set up an ID for current project state reference
         projectDiv.dataset.projectId = project.id;
 
-        // Todo items as li
-        const todosHTML = project.todosArr
-            .map(todo => `<li><p class="todo-title">${todo.title}</p><p>Due: ${todo.dueDate}</p></li>`)
-            .join("");
-
-        // create each div for each project containing all the todos
+        // create each div for each project
         projectDiv.innerHTML = `
             <h4>${project.name}</h4>
-            <ul>${todosHTML}</ul>
         `;
 
         // On click for project state for filtering

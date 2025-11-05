@@ -130,7 +130,7 @@
       }
 
       // Fire the Functions to populate all the elements when DOM loaded
-      initializeTodosContent(onTodoSubmit, todos);
+      initializeTodosContent(onTodoSubmit, todos, projects);
       initializeProjectsContent(onProjectSubmit);
       // Add a default Project whenever the Project list is empty
       if (projects.length === 0) {

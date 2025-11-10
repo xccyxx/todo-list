@@ -158,86 +158,84 @@ const initializeTodosContent = (onTodoSubmit, todos, projects) => {
     addTodoBtn.className = "add-todo-button";
 
     // Add the button to DOM
-    todosSection.appendChild(addTodoBtn);
+    todosSection.appendChild(addTodoBtn);   
 
-    //create dialog
-    const dialog = document.createElement("dialog");
-    dialog.className = "add-todo-modal";
-    dialog.innerHTML = `
-        <form class="add-todo-form">
-            <h3>Add New Todo</h3>
-            <div>
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" required>
-            </div>
-            <div>
-                <label for="description">Description:</label>
-                <textarea id="description" name="description"></textarea>
-            </div>
-            <div>
-                <label for="dueDate">Due Date:</label>
-                <input type="date" id="dueDate" name="dueDate" required>
-            </div>
-            <div>
-                <label for="priority">Priority:</label>
-                <select id="priority" name="priority">
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                </select>
-            </div>
-            <div>
-                <label for="project">Assign to Project:</label>
-                <select name="project" class="project-select">
-                </select>
-            </div>
-            <button type="submit">Add</button>
-            <button type="button" class="cancel-add-btn">Cancel</button>
-        </form>
-    `
-    // Add the dialog
-    document.body.appendChild(dialog);
-
-    // FORM
-
-    // Get form reference
-    const addTodoForm = document.querySelector(".add-todo-form");
-
-    // Populate project options of the add todo form
-    populateProjectDropdown(dialog, projects);
-    // Set up event listener for data processing
-    addTodoForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(addTodoForm);
-
-        const todoData = {
-            title: formData.get('title'),
-            description: formData.get('description'), 
-            dueDate: formData.get('dueDate'),
-            priority: formData.get('priority'),
-            project: formData.get("project")
-        }
-        onTodoSubmit(todoData, todos);
-        dialog.close();
-        dialog.remove();
-    });
-
-    // MODAL Buttons
-
-    // Set up event listener for the Cancel btn
-    const cancelBtn = dialog.querySelector(".cancel-add-btn");
-    cancelBtn.addEventListener("click", () => {
-        dialog.close();
-        dialog.remove();
-    })
-
-    // Set up event listener for show add button form
+    // Set up event listener for show add Todo dialog
     addTodoBtn.addEventListener("click", () => {
+        //create dialog 
+        const dialog = document.createElement("dialog");
+        dialog.className = "add-todo-modal";
+        dialog.innerHTML = `
+            <form class="add-todo-form">
+                <h3>Add New Todo</h3>
+                <div>
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div>
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description"></textarea>
+                </div>
+                <div>
+                    <label for="dueDate">Due Date:</label>
+                    <input type="date" id="dueDate" name="dueDate" required>
+                </div>
+                <div>
+                    <label for="priority">Priority:</label>
+                    <select id="priority" name="priority">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="project">Assign to Project:</label>
+                    <select name="project" class="project-select">
+                    </select>
+                </div>
+                <button type="submit">Add</button>
+                <button type="button" class="cancel-add-btn">Cancel</button>
+            </form>
+        `
+        // Populate project options of the add todo form
+        populateProjectDropdown(dialog, projects);
         // append the dialog to the DOM
+        document.body.appendChild(dialog);
+        // show
         dialog.showModal();
-    })
+        
+        // FORM
 
+        // Get form reference
+        const addTodoForm = dialog.querySelector(".add-todo-form");
+
+        // Set up event listener for data processing
+        addTodoForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(addTodoForm);
+
+            const todoData = {
+                title: formData.get('title'),
+                description: formData.get('description'), 
+                dueDate: formData.get('dueDate'),
+                priority: formData.get('priority'),
+                project: formData.get("project")
+            }
+            onTodoSubmit(todoData, todos);
+            dialog.close();
+            dialog.remove();
+        });
+
+        // MODAL Buttons
+
+        // Set up event listener for the Cancel btn
+        const cancelBtn = dialog.querySelector(".cancel-add-btn");
+        cancelBtn.addEventListener("click", () => {
+            dialog.close();
+            dialog.remove();
+        })
+    })
 
     // Add Todo List Div to store all the todo divs
     const todosContainer = document.createElement("div");
@@ -279,6 +277,7 @@ const initializeProjectsContent = (onProjectSubmit) => {
             name: formData.get("name")
         }
         onProjectSubmit(projectData);
+        projectForm.reset();
      });
 }
 

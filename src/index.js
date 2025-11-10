@@ -53,7 +53,7 @@
 
         // Handle the UI update
         renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
-        renderProjects(projects);                   
+        renderProjects(projects, projectItemOnClick);   
       };
 
       const handleProjectCreation = (projectName) => {
@@ -64,7 +64,7 @@
         saveProjectsToStorage(projects);
 
         // Handle the UI update
-        renderProjects(projects);
+        renderProjects(projects, projectItemOnClick);   
         updateAllProjectDropdown(projects);
       }
 
@@ -113,7 +113,7 @@
 
         // Frontend
         renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
-        renderProjects(projects);
+        renderProjects(projects, projectItemOnClick);   
       }
 
       const handleDeleteButtonClick = (todo) => {
@@ -126,7 +126,7 @@
 
         //Frontend
         renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
-        renderProjects(projects);                   
+      renderProjects(projects, projectItemOnClick);   
       }
 
       // Fire the Functions to populate all the elements when DOM loaded

@@ -154,11 +154,8 @@ const initializeTodosContent = (onTodoSubmit, todos, projects) => {
     
     // Create add to-do form button
     const addTodoBtn = document.createElement("button");
-    addTodoBtn.textContent = "+";
-    addTodoBtn.className = "add-todo-button";
-
-    // Add the button to DOM
-    todosSection.appendChild(addTodoBtn);   
+    addTodoBtn.textContent = "+ Add Task";
+    addTodoBtn.className = "add-todo-button";  
 
     // Set up event listener for show add Todo dialog
     addTodoBtn.addEventListener("click", () => {
@@ -237,6 +234,9 @@ const initializeTodosContent = (onTodoSubmit, todos, projects) => {
         })
     })
 
+    // Add the button to DOM
+    todosSection.appendChild(addTodoBtn); 
+
     // Add Todo List Div to store all the todo divs
     const todosContainer = document.createElement("div");
     todosContainer.className = "todos-container";
@@ -245,40 +245,67 @@ const initializeTodosContent = (onTodoSubmit, todos, projects) => {
 
 const initializeProjectsContent = (onProjectSubmit) => {
     const projectsSection = document.querySelector(".projects-section");
+    
+    // Create Add Project form button
+    const addProjectBtn = document.createElement("button");
+    addProjectBtn.textContent = "+ Add Project";
+    addProjectBtn.className = "add-project-button";
+
+    addProjectBtn.addEventListener("click", () => {
+        //create dialog 
+        const dialog = document.createElement("dialog");
+        dialog.className = "add-project-modal";
+        dialog.innerHTML = `
+            <form class="project-form">
+                <h3>Add New Project</h3>
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <button type="submit">Add</button>
+                <button type="button" class="cancel-add-btn">Cancel</button>
+            </form>
+        `
+            
+        // Set up event listener for data processing
+        const projectForm = dialog.querySelector(".project-form");
+        projectForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(projectForm);
+            const projectData = {
+                name: formData.get("name")
+            }
+            onProjectSubmit(projectData);
+            dialog.close();
+            dialog.remove();
+        });
+
+        // append dialog
+        projectsSection.appendChild(dialog);
+        // show
+        dialog.showModal();
+
+        // MODAL Buttons
+
+        // Set up event listener for the Cancel btn
+        const cancelBtn = dialog.querySelector(".cancel-add-btn");
+        cancelBtn.addEventListener("click", () => {
+            dialog.close();
+            dialog.remove();
+        })
+    })
+
+
+    // Add the button to the projects section
+     projectsSection.appendChild(addProjectBtn);
 
     // Add Projects List Div to store all the project divs
     const projectsContainer = document.createElement("div");
     projectsContainer.className = "projects-container";
     projectsSection.appendChild(projectsContainer);
     
-    // Create project form
-    const projectForm = document.createElement('form');
-    projectForm.className = 'project-form';
 
-    // Create form HTML
-    projectForm.innerHTML = `
-        <h3>Add New Project</h3>
-        <div>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-        </div>
-        <button type="submit">Add Project</button>
-    `;
-
-    // Add the form to the projects section
-     projectsSection.appendChild(projectForm);
-    
-     // Set up event listener for data processing
-     projectForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(projectForm);
-        const projectData = {
-            name: formData.get("name")
-        }
-        onProjectSubmit(projectData);
-        projectForm.reset();
-     });
 }
 
 const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick) => {

@@ -2,8 +2,8 @@
     import { greeting } from "./greeting.js";
     import TodoItem from "./Todo.js";
     import ProjectItem from "./Project.js";
-    import { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, showEditModal, exitEditMode } from "./TodoDOM.js";
-    import { createTodoItem, createProjectItem, addProject, addTodo, getFilteredTodos, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject, deleteTodo, updateTodoInProject } from "./TodoLogic.js";
+    import { initializeTodosContent, renderProjectTodos, renderAllProjects, initializeProjectsContent, renderProjects, updateAllProjectDropdown, showEditModal, exitEditMode } from "./TodoDOM.js";
+    import { createTodoItem, createProjectItem, addProject, addTodo, getFilteredProject, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject, deleteTodo, updateTodoInProject } from "./TodoLogic.js";
     import "./styles.css";
 
 
@@ -52,7 +52,7 @@
         saveProjectsToStorage(projects);
 
         // Handle the UI update
-        renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+        renderProjectTodos(filteredProject, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
         renderProjects(projects, projectItemOnClick);   
       };
 
@@ -76,8 +76,8 @@
 
       const projectItemOnClick = (projectId) => {
         currentProjectId = projectId;
-        let filteredTodos = getFilteredTodos(currentProjectId, projects);
-        renderTodos(filteredTodos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+        let filteredProject = getFilteredProject(currentProjectId, projects);
+        renderProjectTodos(filteredProject, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
       }
 
       const onCompletedToggle = (todo) => {
@@ -85,9 +85,6 @@
 
         // Save to local stoarage
         saveTodosToStorage(todos);
-
-        // Then re-render the todos to show updated state
-        renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
       };
 
       const handleEditButtonClick = (todoId, todo) => {
@@ -112,7 +109,7 @@
         saveProjectsToStorage(projects);
 
         // Frontend
-        renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+        renderProjectTodos(projects, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
         renderProjects(projects, projectItemOnClick);   
       }
 
@@ -125,8 +122,8 @@
         saveProjectsToStorage(projects);
 
         //Frontend
-        renderTodos(todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
-      renderProjects(projects, projectItemOnClick);   
+        renderProjectTodos(projects, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+        renderProjects(projects, projectItemOnClick);   
       }
 
       // Fire the Functions to populate all the elements when DOM loaded
@@ -139,8 +136,8 @@
       }
       currentProjectId = projects[0]?.id || null; 
       renderProjects(projects, projectItemOnClick);   
-      let filteredTodos = getFilteredTodos(currentProjectId, projects);
-      renderTodos(filteredTodos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+      let filteredProject = getFilteredProject(currentProjectId, projects);
+      renderAllProjects(projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
       updateAllProjectDropdown(projects);
     });
 

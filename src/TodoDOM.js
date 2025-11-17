@@ -308,8 +308,14 @@ const initializeProjectsContent = (onProjectSubmit) => {
 
 }
 
-const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick) => {
+const renderProjectTodos = (filteredProject, allProjects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick) => {
     const fragment = document.createDocumentFragment();
+    const projectHeader = document.createElement("h3");
+    projectHeader.textContent = filteredProject.name;
+    fragment.appendChild(projectHeader);
+
+    // loop the todos
+    const todos = filteredProject.todosArr;
     todos.forEach(todo => {
         // a "card" for each to-do
         const todoDiv = document.createElement("div");
@@ -317,7 +323,7 @@ const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick, 
         todoDiv.dataset.todoId = todo.id;
         // Add on-click to expand details
         todoDiv.addEventListener("click", () => {
-            showTodoDetailsModal(todo, projects, handleEditButtonClick, handleDeleteButtonClick);
+            showTodoDetailsModal(todo, allProjects, handleEditButtonClick, handleDeleteButtonClick);
         })
 
         // Due Date Reminder: Calculate days until due
@@ -359,7 +365,8 @@ const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick, 
 
         // Add on-click todo completion toggling
         const completeCheckbox = todoDiv.querySelector(".complete-checkbox");
-        completeCheckbox.addEventListener("click", () => {
+        completeCheckbox.addEventListener("click", (event) => {
+            event.stopPropagation();
             onCompletedToggle(todo);
         })
 
@@ -371,6 +378,85 @@ const renderTodos = (todos, projects, onCompletedToggle, handleEditButtonClick, 
     todosContainer.innerHTML = "";
     todosContainer.appendChild(fragment);
 }
+
+const renderAllProjects = (projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick) => {
+    const todosContainer = document.querySelector(".todos-container");
+    todosContainer.innerHTML = "";
+    const fragment = document.createDocumentFragment();
+    
+    projects.forEach(project => {
+        if (!project.todosArr || project.todosArr.length === 0) return;
+
+        const projectTodoGroup = document.createElement("div");
+        projectTodoGroup.className = "project-todo-group";
+
+        const projectHeader = document.createElement("h3");
+        projectHeader.textContent = project.name;
+        projectTodoGroup.appendChild(projectHeader);
+        
+        // loop the todos
+        const todos = project.todosArr;
+        todos.forEach(todo => {
+            // a "card" for each to-do
+            const todoDiv = document.createElement("div");
+            todoDiv.className = "todo-item";
+            todoDiv.dataset.todoId = todo.id;
+            // Add on-click to expand details
+            todoDiv.addEventListener("click", () => {
+                showTodoDetailsModal(todo, allProjects, handleEditButtonClick, handleDeleteButtonClick);
+        })
+
+        // Due Date Reminder: Calculate days until due
+        const dueDate = parseISO(todo.dueDate);
+        const today = new Date();
+        const daysUntilDue = differenceInCalendarDays(dueDate, today);
+        
+        // formatted date for styling
+        const formattedDate = format(dueDate, 'MMM d, yyyy');
+
+        // Create urgency message if within 7 days
+        let urgencyMessage = '';
+        if (daysUntilDue >= 0 && daysUntilDue <= URGENCY_THRESHOLD_DAYS) {
+            if (daysUntilDue === 0) {
+                urgencyMessage = '<p class="urgent-message urgent">Due today</p>';
+            } else if (daysUntilDue === 1) {
+                urgencyMessage = '<p class="urgent-message urgent">Due tomorrow</p>';
+            } else {
+                urgencyMessage = `<p class="urgent-message urgent">Due in ${daysUntilDue} days</p>`;
+            }
+        // if overdue
+        } else if (daysUntilDue < 0) {
+            urgencyMessage = daysUntilDue === -1 
+                ? '<p class="urgent-message overdue">Overdue by 1 day</p>'
+                : `<p class="urgent-message overdue">Overdue by ${Math.abs(daysUntilDue)} days</p>`;
+        }
+
+        // add todo-view for displaying and hiding purpose
+        todoDiv.innerHTML = `
+            <div class="todo-view">
+                <div class="todo-header">
+                    <input type="checkbox" class="complete-checkbox" ${todo.completed? "checked" : ""}/>
+                    <h4>${todo.title}</h4>
+                </div>
+                <p>Due: ${formattedDate}</p>
+                ${urgencyMessage}
+            </div>
+        `;
+
+        // Add on-click todo completion toggling
+        const completeCheckbox = todoDiv.querySelector(".complete-checkbox");
+        completeCheckbox.addEventListener("click", (event) => {
+            event.stopPropagation();
+            onCompletedToggle(todo);
+        })
+
+        projectTodoGroup.appendChild(todoDiv);
+    })
+    fragment.appendChild(projectTodoGroup);
+});
+    
+    todosContainer.appendChild(fragment);
+};
 
 const renderProjects = (projects, projectItemOnClick) => {
     const fragment = document.createDocumentFragment();
@@ -398,4 +484,4 @@ const renderProjects = (projects, projectItemOnClick) => {
     projectsContainer.appendChild(fragment);
 }
 
-export { initializeTodosContent, renderTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, showEditModal };
+export { initializeTodosContent, renderProjectTodos, renderAllProjects, initializeProjectsContent, renderProjects, updateAllProjectDropdown, showEditModal };

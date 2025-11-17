@@ -23,10 +23,10 @@ const addTodo = (newTodoItem, todos) => {
     }
 }
 
-const getFilteredTodos = (currentProjectId, projects) => {
+const getFilteredProject = (currentProjectId, projects) => {
     currentProjectId = parseInt(currentProjectId);
     const targetProject = projects.find(targetProject => targetProject.id === currentProjectId);
-    return targetProject.todosArr;
+    return targetProject;
 }
 
 const assignTodoToProject = (todo, selectedProjectId, projects) => {
@@ -93,4 +93,4 @@ const deleteTodo = (todo, projects, todos) => {
 }
 
 
-export { createTodoItem, createProjectItem, addProject, addTodo, getFilteredTodos, assignTodoToProject, toggleTodoCompletion, updateTodo, updateTodoInProject, reassignProject, deleteTodo };
+export { createTodoItem, createProjectItem, addProject, addTodo, getFilteredProject, assignTodoToProject, toggleTodoCompletion, updateTodo, updateTodoInProject, reassignProject, deleteTodo };

@@ -34,3 +34,7 @@ img, picture, video, canvas, svg {
     align-items: center;
     gap: 10px;
 }
+
+.urgent-message {
+  font-style: italic;
+}

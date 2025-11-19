@@ -15,7 +15,7 @@ const updateAllProjectDropdown = (projects) => {
     })
 }
 
-const showTodoDetailsModal = (todo, projects, handleEditButtonClick, handleDeleteButtonClick) => {
+const showTodoDetailsModal = (todo, projects, handleEditButtonClick, handleDeleteButtonClick, urgencyMessage) => {
     const dialog = document.createElement("dialog");
     dialog.className = "todo-details-modal";
 
@@ -26,6 +26,7 @@ const showTodoDetailsModal = (todo, projects, handleEditButtonClick, handleDelet
         <h3>${todo.title}</h3>
         <p>${todo.description}</p>
         <p>Due: ${todo.dueDate}</p>
+        ${urgencyMessage}
         <p>Priority: ${todo.priority}</p>
         <p>Project: ${matchProject?.name || "None"}</p>
         <button class="edit-btn">Edit</button>
@@ -101,7 +102,7 @@ const showEditModal = (todoId, todo, projects, matchProject, onTodoEdit) => {
             </div>
             <div>
                 <label for="project">Assign to Project:</label>
-                <select name="project" class="project-select">
+                <select name="project" id="project" class="project-select">
                 </select>
             </div>
             <button type="submit">Confirm</button>
@@ -187,7 +188,7 @@ const initializeTodosContent = (onTodoSubmit, todos, projects) => {
                 </div>
                 <div>
                     <label for="project">Assign to Project:</label>
-                    <select name="project" class="project-select">
+                    <select name="project" id="project" class="project-select">
                     </select>
                 </div>
                 <button type="submit">Add</button>
@@ -304,15 +305,18 @@ const initializeProjectsContent = (onProjectSubmit) => {
     const projectsContainer = document.createElement("div");
     projectsContainer.className = "projects-container";
     projectsSection.appendChild(projectsContainer);
-    
-
 }
 
 const renderProjectTodos = (filteredProject, allProjects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick) => {
     const fragment = document.createDocumentFragment();
+
+    const projectTodoGroup = document.createElement("div");
+    projectTodoGroup.className = "project-todo-group";
     const projectHeader = document.createElement("h3");
     projectHeader.textContent = filteredProject.name;
-    fragment.appendChild(projectHeader);
+    
+    // append Header
+    projectTodoGroup.appendChild(projectHeader);
 
     // loop the todos
     const todos = filteredProject.todosArr;
@@ -321,10 +325,6 @@ const renderProjectTodos = (filteredProject, allProjects, onCompletedToggle, han
         const todoDiv = document.createElement("div");
         todoDiv.className = "todo-item";
         todoDiv.dataset.todoId = todo.id;
-        // Add on-click to expand details
-        todoDiv.addEventListener("click", () => {
-            showTodoDetailsModal(todo, allProjects, handleEditButtonClick, handleDeleteButtonClick);
-        })
 
         // Due Date Reminder: Calculate days until due
         const dueDate = parseISO(todo.dueDate);
@@ -355,7 +355,7 @@ const renderProjectTodos = (filteredProject, allProjects, onCompletedToggle, han
         todoDiv.innerHTML = `
             <div class="todo-view">
                 <div class="todo-header">
-                    <input type="checkbox" class="complete-checkbox" ${todo.completed? "checked" : ""}/>
+                    <input type="checkbox" name="completed" class="complete-checkbox" ${todo.completed? "checked" : ""}/>
                     <h4>${todo.title}</h4>
                 </div>
                 <p>Due: ${formattedDate}</p>
@@ -370,8 +370,14 @@ const renderProjectTodos = (filteredProject, allProjects, onCompletedToggle, han
             onCompletedToggle(todo);
         })
 
-        fragment.appendChild(todoDiv);
+        // Add on-click to expand details
+        todoDiv.addEventListener("click", () => {
+            showTodoDetailsModal(todo, allProjects, handleEditButtonClick, handleDeleteButtonClick, urgencyMessage);
+        })
+        projectTodoGroup.appendChild(todoDiv);
     })
+
+    fragment.appendChild(projectTodoGroup);
 
     // Display the new to-do div
     const todosContainer = document.querySelector(".todos-container");
@@ -379,12 +385,12 @@ const renderProjectTodos = (filteredProject, allProjects, onCompletedToggle, han
     todosContainer.appendChild(fragment);
 }
 
-const renderAllProjects = (projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick) => {
+const renderAllTodos = (allProjects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick) => {
     const todosContainer = document.querySelector(".todos-container");
     todosContainer.innerHTML = "";
     const fragment = document.createDocumentFragment();
     
-    projects.forEach(project => {
+    allProjects.forEach(project => {
         if (!project.todosArr || project.todosArr.length === 0) return;
 
         const projectTodoGroup = document.createElement("div");
@@ -401,60 +407,60 @@ const renderAllProjects = (projects, onCompletedToggle, handleEditButtonClick, h
             const todoDiv = document.createElement("div");
             todoDiv.className = "todo-item";
             todoDiv.dataset.todoId = todo.id;
+
+            // Due Date Reminder: Calculate days until due
+            const dueDate = parseISO(todo.dueDate);
+            const today = new Date();
+            const daysUntilDue = differenceInCalendarDays(dueDate, today);
+            
+            // formatted date for styling
+            const formattedDate = format(dueDate, 'MMM d, yyyy');
+
+            // Create urgency message if within 7 days
+            let urgencyMessage = '';
+            if (daysUntilDue >= 0 && daysUntilDue <= URGENCY_THRESHOLD_DAYS) {
+                if (daysUntilDue === 0) {
+                    urgencyMessage = '<p class="urgent-message urgent">Due today</p>';
+                } else if (daysUntilDue === 1) {
+                    urgencyMessage = '<p class="urgent-message urgent">Due tomorrow</p>';
+                } else {
+                    urgencyMessage = `<p class="urgent-message urgent">Due in ${daysUntilDue} days</p>`;
+                }
+            // if overdue
+            } else if (daysUntilDue < 0) {
+                urgencyMessage = daysUntilDue === -1 
+                    ? '<p class="urgent-message overdue">Overdue by 1 day</p>'
+                    : `<p class="urgent-message overdue">Overdue by ${Math.abs(daysUntilDue)} days</p>`;
+            }
+
+            // add todo-view for displaying and hiding purpose
+            todoDiv.innerHTML = `
+                <div class="todo-view">
+                    <div class="todo-header">
+                        <input type="checkbox" name="completed" class="complete-checkbox" ${todo.completed? "checked" : ""}/>
+                        <h4>${todo.title}</h4>
+                    </div>
+                    <p>Due: ${formattedDate}</p>
+                    ${urgencyMessage}
+                </div>
+            `;
+
+            // Add on-click todo completion toggling
+            const completeCheckbox = todoDiv.querySelector(".complete-checkbox");
+            completeCheckbox.addEventListener("click", (event) => {
+                event.stopPropagation();
+                onCompletedToggle(todo);
+            })
+
             // Add on-click to expand details
             todoDiv.addEventListener("click", () => {
-                showTodoDetailsModal(todo, allProjects, handleEditButtonClick, handleDeleteButtonClick);
+                showTodoDetailsModal(todo, allProjects, handleEditButtonClick, handleDeleteButtonClick, urgencyMessage);
+            })
+
+            projectTodoGroup.appendChild(todoDiv);
         })
-
-        // Due Date Reminder: Calculate days until due
-        const dueDate = parseISO(todo.dueDate);
-        const today = new Date();
-        const daysUntilDue = differenceInCalendarDays(dueDate, today);
-        
-        // formatted date for styling
-        const formattedDate = format(dueDate, 'MMM d, yyyy');
-
-        // Create urgency message if within 7 days
-        let urgencyMessage = '';
-        if (daysUntilDue >= 0 && daysUntilDue <= URGENCY_THRESHOLD_DAYS) {
-            if (daysUntilDue === 0) {
-                urgencyMessage = '<p class="urgent-message urgent">Due today</p>';
-            } else if (daysUntilDue === 1) {
-                urgencyMessage = '<p class="urgent-message urgent">Due tomorrow</p>';
-            } else {
-                urgencyMessage = `<p class="urgent-message urgent">Due in ${daysUntilDue} days</p>`;
-            }
-        // if overdue
-        } else if (daysUntilDue < 0) {
-            urgencyMessage = daysUntilDue === -1 
-                ? '<p class="urgent-message overdue">Overdue by 1 day</p>'
-                : `<p class="urgent-message overdue">Overdue by ${Math.abs(daysUntilDue)} days</p>`;
-        }
-
-        // add todo-view for displaying and hiding purpose
-        todoDiv.innerHTML = `
-            <div class="todo-view">
-                <div class="todo-header">
-                    <input type="checkbox" class="complete-checkbox" ${todo.completed? "checked" : ""}/>
-                    <h4>${todo.title}</h4>
-                </div>
-                <p>Due: ${formattedDate}</p>
-                ${urgencyMessage}
-            </div>
-        `;
-
-        // Add on-click todo completion toggling
-        const completeCheckbox = todoDiv.querySelector(".complete-checkbox");
-        completeCheckbox.addEventListener("click", (event) => {
-            event.stopPropagation();
-            onCompletedToggle(todo);
-        })
-
-        projectTodoGroup.appendChild(todoDiv);
-    })
-    fragment.appendChild(projectTodoGroup);
-});
-    
+        fragment.appendChild(projectTodoGroup);
+    });
     todosContainer.appendChild(fragment);
 };
 
@@ -484,4 +490,4 @@ const renderProjects = (projects, projectItemOnClick) => {
     projectsContainer.appendChild(fragment);
 }
 
-export { initializeTodosContent, renderProjectTodos, renderAllProjects, initializeProjectsContent, renderProjects, updateAllProjectDropdown, showEditModal };
+export { initializeTodosContent, renderProjectTodos, renderAllTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, showEditModal };

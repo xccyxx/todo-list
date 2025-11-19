@@ -2,7 +2,7 @@
     import { greeting } from "./greeting.js";
     import TodoItem from "./Todo.js";
     import ProjectItem from "./Project.js";
-    import { initializeTodosContent, renderProjectTodos, renderAllProjects, initializeProjectsContent, renderProjects, updateAllProjectDropdown, showEditModal, exitEditMode } from "./TodoDOM.js";
+    import { initializeTodosContent, renderProjectTodos, renderAllTodos, initializeProjectsContent, renderProjects, updateAllProjectDropdown, showEditModal, exitEditMode } from "./TodoDOM.js";
     import { createTodoItem, createProjectItem, addProject, addTodo, getFilteredProject, assignTodoToProject, toggleTodoCompletion, updateTodo, reassignProject, deleteTodo, updateTodoInProject } from "./TodoLogic.js";
     import "./styles.css";
 
@@ -42,7 +42,8 @@
         // Extract the data
         const { title, description, dueDate, priority, project } = todoData;
         const selectedProjectId = parseInt(project);
-        
+        let filteredProject = getFilteredProject(selectedProjectId, projects);
+
         // Handle the business logic
         const newTodo = createTodoItem(title, description, dueDate, priority);
         addTodo(newTodo, todos);
@@ -85,6 +86,7 @@
 
         // Save to local stoarage
         saveTodosToStorage(todos);
+        saveProjectsToStorage(projects);
       };
 
       const handleEditButtonClick = (todoId, todo) => {
@@ -109,7 +111,10 @@
         saveProjectsToStorage(projects);
 
         // Frontend
-        renderProjectTodos(projects, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+        // find the project that the todo belongs to
+        const matchProject = projects.find((project) => project.todosArr.some(projectTodo => projectTodo.id === todo.id));
+
+        renderProjectTodos(matchProject, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
         renderProjects(projects, projectItemOnClick);   
       }
 
@@ -122,7 +127,15 @@
         saveProjectsToStorage(projects);
 
         //Frontend
-        renderProjectTodos(projects, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+        if (currentProjectId === "all") {
+            renderAllTodos(projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+        } else {
+            const filteredProject = getFilteredProject(currentProjectId, projects);
+            if (filteredProject) {  // Null check
+              renderProjectTodos(filteredProject, projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+            }
+        }
+
         renderProjects(projects, projectItemOnClick);   
       }
 
@@ -131,13 +144,12 @@
       initializeProjectsContent(onProjectSubmit);
       // Add a default Project whenever the Project list is empty
       if (projects.length === 0) {
-        handleProjectCreation("Default");
+        handleProjectCreation("General");
         
       }
-      currentProjectId = projects[0]?.id || null; 
+      currentProjectId = projects.length > 0 ? "all" : null;
       renderProjects(projects, projectItemOnClick);   
-      let filteredProject = getFilteredProject(currentProjectId, projects);
-      renderAllProjects(projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
+      renderAllTodos(projects, onCompletedToggle, handleEditButtonClick, handleDeleteButtonClick);
       updateAllProjectDropdown(projects);
     });
 
